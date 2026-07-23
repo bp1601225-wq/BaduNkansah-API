@@ -1,71 +1,59 @@
 {
   "version": 1,
   "skills": {
-    "firebase-ai-logic-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-cli": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-ai-logic-basics/SKILL.md",
-      "computedHash": "d99bb286f07517d31efdfe54af482b44508b4e4cd49a518051e0f0c1d6ca9069"
+      "skillPath": "prisma-cli/SKILL.md",
+      "computedHash": "f41a5af7f25a686631a0e2a8b7031f3c57e0e06b81932f6389736d930d05fa54"
     },
-    "firebase-app-hosting-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-client-api": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-app-hosting-basics/SKILL.md",
-      "computedHash": "d77e5e62286b6e05e513ee8b5651b34ffe73c4231e252e23db5982b854cf4d78"
+      "skillPath": "prisma-client-api/SKILL.md",
+      "computedHash": "7825288518e0722b497de03367a1aee477fc61b0b488d456b9b6257294c005ae"
     },
-    "firebase-auth-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-compute": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-auth-basics/SKILL.md",
-      "computedHash": "9eb2db290f00437021a8fc09353a1be28663170b669b028ade3691d57b061874"
+      "skillPath": "prisma-compute/SKILL.md",
+      "computedHash": "b2e1d4b2fda6f523b2eb4a38e25c12b7800e4a2801a97b750e95df8131addec0"
     },
-    "firebase-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-database-setup": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-basics/SKILL.md",
-      "computedHash": "6c40f96765c945a406244f2f020133c7cf4e7857be055f7420e2f9465e5b1e7e"
+      "skillPath": "prisma-database-setup/SKILL.md",
+      "computedHash": "0911d9454bd48df3badd23a50fd90a280eabb15dcbd472c14e7b729075dadefb"
     },
-    "firebase-crashlytics": {
-      "source": "firebase/agent-skills",
+    "prisma-driver-adapter-implementation": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-crashlytics/SKILL.md",
-      "computedHash": "3465237d88abfbbcc571429682998716b4b32194114b5c3675e4d9e06cdd852a"
+      "skillPath": "prisma-driver-adapter-implementation/SKILL.md",
+      "computedHash": "86034220752575ac0551aa3d579ed0bdfb90616000ae5703bf11e47b655ec7d1"
     },
-    "firebase-data-connect": {
-      "source": "firebase/agent-skills",
+    "prisma-mongodb-upgrade": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-data-connect-basics/SKILL.md",
-      "computedHash": "855a5c537d1d3dcf90b3332adaa9be5e03201e54170d690cb95eb3b223421c4d"
+      "skillPath": "prisma-mongodb-upgrade/SKILL.md",
+      "computedHash": "f9ba440e88ca4cec9801d04762296e29e99ca08cb8a8156e4f783ecf90279c8f"
     },
-    "firebase-firestore": {
-      "source": "firebase/agent-skills",
+    "prisma-postgres": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-firestore/SKILL.md",
-      "computedHash": "7fb6533c63627fc0ec0f6bab00d641ce0050eed823925d61a9a40545061646ee"
+      "skillPath": "prisma-postgres/SKILL.md",
+      "computedHash": "66dc44132bdb85cfa369e21a8512c6427c574f5186c8631d345aca9b111091c1"
     },
-    "firebase-hosting-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-postgres-setup": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-hosting-basics/SKILL.md",
-      "computedHash": "1e18b014fdfde33ad3881a4a27610d21a6b836f54b6572cd8f28297da156686a"
+      "skillPath": "prisma-postgres-setup/SKILL.md",
+      "computedHash": "c89d3aa91285d8e4964fcaa5238c99a3d3c20b617e032e731cf632330a85a5a6"
     },
-    "firebase-remote-config-basics": {
-      "source": "firebase/agent-skills",
+    "prisma-upgrade-v7": {
+      "source": "prisma/skills",
       "sourceType": "github",
-      "skillPath": "skills/firebase-remote-config-basics/SKILL.md",
-      "computedHash": "895c77b7597e79c36d76cfa6bfd6732e23fe4fa516b0991393bf139d32b75393"
-    },
-    "firebase-security-rules-auditor": {
-      "source": "firebase/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/firebase-security-rules-auditor/SKILL.md",
-      "computedHash": "0ef93a495615c8fb4db2458e526897a9e7e58c7efca4fdb76564a0962fef5d43"
-    },
-    "xcode-project-setup": {
-      "source": "firebase/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/xcode-project-setup/SKILL.md",
-      "computedHash": "847d62cb428f3ee7bf9842ab31f9bc04c28f32284168b992e40d4afb8575d2be"
+      "skillPath": "prisma-upgrade-v7/SKILL.md",
+      "computedHash": "dcc6c71adca6b22f37c5bda5ac7fd63c3bb59495596a22e06a29c7c85371558f"
     }
   }
 }

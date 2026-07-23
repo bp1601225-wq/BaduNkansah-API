@@ -1,0 +1,21 @@
+/api/masters
+
+POST    /authors
+GET     /authors
+GET     /authors/:id
+PATCH   /authors/:id
+DELETE  /authors/:id
+
+
+POST    /categories
+GET     /categories
+GET     /categories/:id
+PATCH   /categories/:id
+DELETE  /categories/:id
+
+
+POST    /stationeries
+GET     /stationeries
+GET     /stationeries/:id
+PATCH   /stationeries/:id
+DELETE  /stationeries/:id

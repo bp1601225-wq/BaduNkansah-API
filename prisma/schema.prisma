@@ -1,0 +1,505 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+// =========================
+// ENUMS
+// =========================
+
+enum BookStatus {
+  ACTIVE
+  DISCONTINUED
+  ARCHIVED
+}
+
+
+enum StockStatus {
+  IN_STOCK
+  LOW_STOCK
+  OUT_OF_STOCK
+}
+
+
+enum CategoryStatus {
+  ACTIVE
+  INACTIVE
+}
+
+
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+}
+
+
+enum PurchaseStatus {
+  PENDING
+  RECEIVED
+  COMPLETED
+  CANCELLED
+}
+
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  LEAVE
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CustomerType {
+  REGULAR
+  WHOLESALE
+  STUDENT
+  SCHOOL
+}
+
+
+
+// =========================
+// CUSTOMER MANAGEMENT
+// =========================
+
+
+// =========================
+// CATEGORY MANAGEMENT
+// =========================
+model Customer {
+
+  id          String @id @default(uuid())
+
+  firstName   String
+  lastName    String
+
+  phone       String @unique
+
+  email       String?
+
+  address     String?
+
+  type        CustomerType @default(REGULAR)
+
+  status      CustomerStatus @default(ACTIVE)
+
+  notes       String?
+
+
+  reservations BookReservation[]
+
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+}
+
+
+model BookCategory {
+  id             String         @id @default(uuid())
+  categoryName   String         @unique
+  description    String?
+  status         CategoryStatus @default(ACTIVE)
+
+  books          BookCatalog[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model MaintenanceCategory {
+  id             String         @id @default(uuid())
+  categoryName   String         @unique
+  description    String?
+  status         CategoryStatus @default(ACTIVE)
+
+  maintenances   Maintenance[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ExpenseCategory {
+  id             String         @id @default(uuid())
+  categoryName   String         @unique
+  description    String?
+  status         CategoryStatus @default(ACTIVE)
+
+  expenses       Expense[]
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// =========================
+// AUTHOR
+// =========================
+
+model Author {
+  id           String   @id @default(uuid())
+  authorName   String
+  biography    String?
+
+  books        BookCatalog[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
+// =========================
+// CATEGORY
+// =========================
+
+
+
+
+
+
+
+// =========================
+// BOOK MANAGEMENT
+// =========================
+
+model BookCatalog {
+
+  id             String      @id @default(uuid())
+
+  bookTitle      String
+  isbn           String?
+
+  buyingPrice    Decimal
+  sellingPrice   Decimal
+
+  status         BookStatus  @default(ACTIVE)
+
+  authorId       String
+  categoryId     String
+
+  author         Author           @relation(fields: [authorId], references: [id])
+
+  category       BookCategory     @relation(fields: [categoryId], references: [id])
+
+  inventory      Inventory?
+
+  purchaseItems  PurchaseItem[]
+
+  reservations   BookReservation[]   // <-- Add this
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// =========================
+// BOOK RESERVATION
+// =========================
+
+enum ReservationStatus {
+  ACTIVE
+  COLLECTED
+  CANCELLED
+  EXPIRED
+}
+
+model BookReservation {
+
+  id          String @id @default(uuid())
+
+  customerId  String
+
+  bookId      String
+
+  quantity    Int @default(1)
+
+  reservedDate DateTime @default(now())
+
+  expiryDate DateTime
+
+  status ReservationStatus @default(ACTIVE)
+
+  notes String?
+
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  book BookCatalog @relation(fields: [bookId], references: [id])
+
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+// =========================
+// STATIONERY MANAGEMENT
+// =========================
+
+model Stationary {
+
+  id             String      @id @default(uuid())
+
+  name           String
+
+  description    String?
+
+  status         StockStatus @default(IN_STOCK)
+
+
+  inventory      Inventory?
+
+  purchaseItems  PurchaseItem[]
+
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+// =========================
+// INVENTORY MANAGEMENT
+// =========================
+
+model Inventory {
+
+  id             String      @id @default(uuid())
+
+
+  bookId         String?     @unique
+
+  stationaryId   String?     @unique
+
+
+  quantity       Int         @default(0)
+
+  status         StockStatus @default(IN_STOCK)
+
+
+  book           BookCatalog? @relation(fields: [bookId], references: [id])
+
+
+  stationary     Stationary? @relation(fields: [stationaryId], references: [id])
+
+
+  reason         String?
+
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
+
+
+// =========================
+// SUPPLIER MANAGEMENT
+// =========================
+
+model Supplier {
+
+  id             String   @id @default(uuid())
+
+
+  companyName    String
+
+  contactName    String?
+
+  phone          String
+
+  email          String?
+
+  address        String?
+
+  status         SupplierStatus @default(ACTIVE)
+
+  purchases      Purchase[]
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
+
+
+// =========================
+// PURCHASE MANAGEMENT
+// =========================
+
+model Purchase {
+
+  id             String          @id @default(uuid())
+
+
+  supplierId     String
+
+
+  purchaseDate   DateTime        @default(now())
+
+
+  status         PurchaseStatus  @default(PENDING)
+
+
+  totalAmount    Decimal         @default(0)
+
+
+
+  supplier       Supplier        @relation(fields: [supplierId], references: [id])
+
+
+  items          PurchaseItem[]
+
+
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
+
+
+
+// =========================
+// PURCHASE ITEMS
+// =========================
+
+model PurchaseItem {
+
+  id             String @id @default(uuid())
+
+
+  purchaseId     String
+
+
+  bookId         String?
+
+  stationaryId   String?
+
+
+  quantity       Int
+
+
+  costPrice      Decimal
+
+
+
+  purchase       Purchase @relation(fields: [purchaseId], references: [id])
+
+
+  book           BookCatalog? @relation(fields: [bookId], references: [id])
+
+
+  stationary     Stationary? @relation(fields: [stationaryId], references: [id])
+}
+
+// =========================
+// STORE OPERATIONS
+// =========================
+
+
+// =========================
+// Employee Management
+// =========================
+
+
+model Employee {
+  id          String   @id @default(uuid())
+
+  fullName    String
+
+  phoneNumber String?
+
+  roleId      String
+
+  role        Role @relation(fields: [roleId], references: [id])
+
+  salary      Decimal?
+
+  status      EmployeeStatus @default(ACTIVE)
+
+  hireDate    DateTime
+
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Role {
+  id        String @id @default(uuid())
+
+  name      String
+
+  employees Employee[]
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+// =========================
+// Maintenance Management   
+// =========================
+
+model Maintenance {
+  id                  String   @id @default(uuid())
+
+  itemName            String
+
+  issue               String
+
+  maintenanceCategoryId String
+
+  category            MaintenanceCategory @relation(fields: [maintenanceCategoryId], references: [id])
+
+  amount              Decimal?
+
+  serviceDate         DateTime
+
+  remarks             String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+
+
+// =========================
+// Expense Management   
+// ========================= 
+
+model Expense {
+  id                 String   @id @default(uuid())
+
+  expenseName        String
+
+  expenseCategoryId  String
+
+  category           ExpenseCategory @relation(fields: [expenseCategoryId], references: [id])
+
+  amount             Decimal
+
+  expenseDate        DateTime
+
+  description        String?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+
+
