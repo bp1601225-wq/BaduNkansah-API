@@ -76,8 +76,47 @@ enum CustomerType {
   SCHOOL
 }
 
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+}
 
 
+
+// =========================
+// RETURN MANAGEMENT
+// =========================
+
+model BookReturn {
+
+  id              String        @id @default(uuid())
+
+  customerId      String
+
+  bookId          String
+
+  quantity        Int           @default(1)
+
+  reason          String
+
+  refundAmount    Decimal?
+
+  status          ReturnStatus  @default(PENDING)
+
+  notes           String?
+
+  returnDate      DateTime      @default(now())
+
+  customer        Customer      @relation(fields: [customerId], references: [id])
+
+  book            BookCatalog   @relation(fields: [bookId], references: [id])
+
+  createdAt       DateTime      @default(now())
+
+  updatedAt       DateTime      @updatedAt
+}
 // =========================
 // CUSTOMER MANAGEMENT
 // =========================
@@ -107,6 +146,9 @@ model Customer {
 
 
   reservations BookReservation[]
+
+
+returns BookReturn[]
 
   createdAt   DateTime @default(now())
 
@@ -156,7 +198,7 @@ model ExpenseCategory {
 
 model Author {
   id           String   @id @default(uuid())
-  authorName   String
+  authorName   String   @unique
   biography    String?
 
   books        BookCatalog[]
@@ -187,7 +229,7 @@ model BookCatalog {
   bookTitle      String
   isbn           String?
 
-  buyingPrice    Decimal
+  // buyingPrice    Decimal
   sellingPrice   Decimal
 
   status         BookStatus  @default(ACTIVE)
@@ -203,7 +245,9 @@ model BookCatalog {
 
   purchaseItems  PurchaseItem[]
 
-  reservations   BookReservation[]   // <-- Add this
+  reservations   BookReservation[]   
+
+  returns BookReturn[]
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

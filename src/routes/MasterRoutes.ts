@@ -34,34 +34,58 @@ MasterRouter.delete(
 );
 
 
+
+
+// =========================
+// Suppliers Routes
+// =========================
+
+MasterRouter.get("/suppliers", MasterControllers.GetAllSuppliers)
+
+
+MasterRouter.post("/suppliers", MasterControllers.CreateSupplier)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =========================
 // Categories Routes
 // =========================
 
-MasterRouter.post(
-  "/categories",
-  MasterControllers.createCategory
-);
+// MasterRouter.post(
+//   "/categories",
+//   MasterControllers.createCategory
+// );
 
-MasterRouter.get(
-  "/categories",
-  MasterControllers.getAllCategories
-);
+// MasterRouter.get(
+//   "/categories",
+//   MasterControllers.getAllCategories
+// );
 
-MasterRouter.get(
-  "/categories/:id",
-  MasterControllers.getCategoryById
-);
+// MasterRouter.get(
+//   "/categories/:id",
+//   MasterControllers.getCategoryById
+// );
 
-MasterRouter.patch(
-  "/categories/:id",
-  MasterControllers.updateCategory
-);
+// MasterRouter.patch(
+//   "/categories/:id",
+//   MasterControllers.updateCategory
+// );
 
-MasterRouter.delete(
-  "/categories/:id",
-  MasterControllers.deleteCategory
-);
+// MasterRouter.delete(
+//   "/categories/:id",
+//   MasterControllers.deleteCategory
+// );
 
 
 // =========================

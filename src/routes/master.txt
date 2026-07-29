@@ -1,21 +1,14 @@
-/api/masters
 
-POST    /authors
-GET     /authors
-GET     /authors/:id
-PATCH   /authors/:id
-DELETE  /authors/:id
+/Reservation Model/
 
 
-POST    /categories
-GET     /categories
-GET     /categories/:id
-PATCH   /categories/:id
-DELETE  /categories/:id
+
+Customer reserves a book (and pays)
+Customer pays.
+Reservation is created.
+Reserved quantity increases.
+Available stock decreases.
 
 
-POST    /stationeries
-GET     /stationeries
-GET     /stationeries/:id
-PATCH   /stationeries/:id
-DELETE  /stationeries/:id
+decrease inventory by reserved quantity. (COLLECTED)
+Add the reserved quantity back to inventory (CANCELLED)

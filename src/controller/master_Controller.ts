@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import MastersService from "../services/master_Services";
 import ResponseWork from "../utilityResponse/Response";
+import { error } from "node:console";
 
 const MasterControllers = {
 
@@ -13,7 +14,11 @@ const MasterControllers = {
 
       const incomingData = req.body;
 
+      console.log(incomingData)
+
+
       const author = await MastersService.createAuthor(incomingData);
+
 
       return ResponseWork.SuccessResponse(
         201,
@@ -87,6 +92,9 @@ const MasterControllers = {
 
       const author = await MastersService.updateAuthor(req.body);
 
+
+      console.log(author)
+
       return ResponseWork.SuccessResponse(
         200,
         "Author updated successfully",
@@ -133,132 +141,206 @@ async deleteAuthor(
   }
 },
 
+
+
+
+
+  // =========================
+  // Suppliers
+  // =========================
+async GetAllSuppliers(req:Request, res:Response, ){
+
+  try {
+
+    const data =await MastersService.GetAllSuppliers()
+
+    ResponseWork.SuccessResponse(
+      201,
+      "Suppliers fetched Succesfully",
+      data,
+      res,
+
+    )
+
+  } catch (error){
+ResponseWork.FailureResponse(
+  500,
+  "Something went wrong whilst fetching suppliers",
+  res,
+  error
+)
+  }
+},
+
+
+async CreateSupplier(req:Request, res:Response, ){
+
+  try {
+
+
+    const incomingData = req.body
+
+console.log(incomingData)
+
+    const data =await MastersService.CreatSuppliers(incomingData)
+
+    ResponseWork.SuccessResponse(
+      201,
+      "Supplier ccreated Succesfully",
+      data,
+      res,
+
+    )
+
+  } catch (error){
+
+console.log(error)
+
+ResponseWork.FailureResponse(
+  500,
+  "Something went wrong whilst creating supplier",
+  res,
+  error
+)
+  }
+},
+
+
+
+
+
+
+
+
+
+
+
   // =========================
   // Categories
 
   // =========================
 
 
-  async createCategory(req: Request, res: Response, next: NextFunction) {
-    try {
+  // async createCategory(req: Request, res: Response, next: NextFunction) {
+  //   try {
 
-      const category = await MastersService.createCategory(req.body);
+  //     const category = await MastersService.createCategory(req.body);
 
-      return ResponseWork.SuccessResponse(
-        201,
-        "Category created successfully",
-        category,
-        res
-      );
+  //     return ResponseWork.SuccessResponse(
+  //       201,
+  //       "Category created successfully",
+  //       category,
+  //       res
+  //     );
 
-    } catch (error) {
-      return ResponseWork.FailureResponse(
-        400,
-        "Failed to create category",
-        res,
-        error
-      );
-    }
-  },
-
-
-  async getAllCategories(req: Request, res: Response, next: NextFunction) {
-    try {
-
-      const categories = await MastersService.getAllCategories();
-
-      return ResponseWork.SuccessResponse(
-        200,
-        "Categories fetched successfully",
-        categories,
-        res
-      );
-
-    } catch (error) {
-      return ResponseWork.FailureResponse(
-        400,
-        "Failed to fetch categories",
-        res,
-        error
-      );
-    }
-  },
+  //   } catch (error) {
+  //     return ResponseWork.FailureResponse(
+  //       400,
+  //       "Failed to create category",
+  //       res,
+  //       error
+  //     );
+  //   }
+  // },
 
 
-  async getCategoryById(
-     req: Request<{ id: string }>
-    , res: Response, next: NextFunction) {
-    try {
+  // async getAllCategories(req: Request, res: Response, next: NextFunction) {
+  //   try {
 
-      const { id } = req.params;
+  //     const categories = await MastersService.getAllCategories();
 
-      const category = await MastersService.getCategoryById(id);
+  //     return ResponseWork.SuccessResponse(
+  //       200,
+  //       "Categories fetched successfully",
+  //       categories,
+  //       res
+  //     );
 
-      return ResponseWork.SuccessResponse(
-        200,
-        "Category fetched successfully",
-        category,
-        res
-      );
-
-    } catch (error) {
-      return ResponseWork.FailureResponse(
-        400,
-        "Failed to fetch category",
-        res,
-        error
-      );
-    }
-  },
+  //   } catch (error) {
+  //     return ResponseWork.FailureResponse(
+  //       400,
+  //       "Failed to fetch categories",
+  //       res,
+  //       error
+  //     );
+  //   }
+  // },
 
 
-  async updateCategory(req: Request, res: Response, next: NextFunction) {
-    try {
+  // async getCategoryById(
+  //    req: Request<{ id: string }>
+  //   , res: Response, next: NextFunction) {
+  //   try {
 
-      const category = await MastersService.updateCategory(req.body);
+  //     const { id } = req.params;
 
-      return ResponseWork.SuccessResponse(
-        200,
-        "Category updated successfully",
-        category,
-        res
-      );
+  //     const category = await MastersService.getCategoryById(id);
 
-    } catch (error) {
-      return ResponseWork.FailureResponse(
-        400,
-        "Failed to update category",
-        res,
-        error
-      );
-    }
-  },
+  //     return ResponseWork.SuccessResponse(
+  //       200,
+  //       "Category fetched successfully",
+  //       category,
+  //       res
+  //     );
+
+  //   } catch (error) {
+  //     return ResponseWork.FailureResponse(
+  //       400,
+  //       "Failed to fetch category",
+  //       res,
+  //       error
+  //     );
+  //   }
+  // },
 
 
-  async deleteCategory(
-     req: Request<{ id: string }>, res: Response, next: NextFunction) {
-    try {
+  // async updateCategory(req: Request, res: Response, next: NextFunction) {
+  //   try {
 
-      const { id } = req.params;
+  //     const category = await MastersService.updateCategory(req.body);
 
-      const category = await MastersService.deleteCategory(id);
+  //     return ResponseWork.SuccessResponse(
+  //       200,
+  //       "Category updated successfully",
+  //       category,
+  //       res
+  //     );
 
-      return ResponseWork.SuccessResponse(
-        200,
-        "Category deleted successfully",
-        category,
-        res
-      );
+  //   } catch (error) {
+  //     return ResponseWork.FailureResponse(
+  //       400,
+  //       "Failed to update category",
+  //       res,
+  //       error
+  //     );
+  //   }
+  // },
 
-    } catch (error) {
-      return ResponseWork.FailureResponse(
-        400,
-        "Failed to delete category",
-        res,
-        error
-      );
-    }
-  },
+
+  // async deleteCategory(
+  //    req: Request<{ id: string }>, res: Response, next: NextFunction) {
+  //   try {
+
+  //     const { id } = req.params;
+
+  //     const category = await MastersService.deleteCategory(id);
+
+  //     return ResponseWork.SuccessResponse(
+  //       200,
+  //       "Category deleted successfully",
+  //       category,
+  //       res
+  //     );
+
+  //   } catch (error) {
+  //     return ResponseWork.FailureResponse(
+  //       400,
+  //       "Failed to delete category",
+  //       res,
+  //       error
+  //     );
+  //   }
+  // },
 
 
   // =========================

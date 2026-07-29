@@ -1,4 +1,5 @@
 import {prisma} from "../lib/prisma"
+import { CategoryService, CategoryModels } from "./category_service";;
 
 const MastersService = {
   // =========================
@@ -18,6 +19,7 @@ const MastersService = {
 return prisma.author.findMany({
   select:{
 
+id:true,
 authorName:true,
 biography:true,
 
@@ -26,6 +28,9 @@ biography:true,
         bookTitle:true,
       }
     },
+  },
+  orderBy:{
+    createdAt:"desc"
   }
 })
   },
@@ -83,96 +88,42 @@ const {id, authorName, biography} = data
     })
   },
 
-  // =========================
-  // Categories
-  // =========================
 
-  createCategory(data:any) {
-return prisma.category.create({
-  data
-})
-
-  },
-
-  getAllCategories() {
-return prisma.category.findMany({
-  select:{
-   categoryName:true,
-   description:true,
-   status:true,
-      
-    books:{
-    select: {
-      bookTitle:true,
-    }
   
-  }
-      }
-})
-  },
 
-  getCategoryById(id:string) {
-return prisma.category.findUnique({
-  where: {
-    id
-  },
 
-  select:{
-   categoryName:true,
-   description:true,
-   status:true,
-      
- books: {
-  select: {
-    bookTitle: true,
+  // =========================
+  // Suppliers
+  // =========================
 
-    author: {
-      select: {
-        authorName: true,
-        biography: true,
-      },
+
+ GetAllSuppliers(){
+  return prisma.supplier.findMany({
+    select: {
+      id:true,
+      companyName:true,
+      contactName:true,
+      phone:true,
+      email:true,
+      address:true,
     },
-  },
-}
-      }
 
-})
-  },
-
-  updateCategory(data:any) {
-
-const {id, categoryName, description, status} = data
-
-return prisma.category.update({
-  where: {
-    id
-  },
-
-  data:{
-    categoryName,
-    description,
-    status
-  }
-})
-  },
+    orderBy:{
+      createdAt:"desc"
+    }
+  })
+ },
 
 
-  deleteCategory(id:string) {
-return prisma.category.delete({
-  where:{
-    id
-  }
-})
-  },
 
-  // =========================
-  // Stationeries
-  // =========================
+ CreatSuppliers(data:any){
+  return prisma.supplier.create({
+data
+  })
+ },
 
-// =========================
-// Stationeries
-// =========================
 
+ 
 createStationery(data: any) {
   return prisma.stationary.create({
     data,

@@ -1,0 +1,10 @@
+Sales (POS)
+Sale Items
+Returns & Refunds
+Wishlist
+Stock Adjustments
+Activity Logs
+Reports & Analytics
+Barcode printing
+Notifications
+Loyalty programs
