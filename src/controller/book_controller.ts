@@ -51,6 +51,8 @@ async CreateBooks(req:Request, res:Response){
 
         const incomingData = req.body
 
+        console.log(`Data is`, incomingData)
+
         const BooksData = await BooksServices.create(
             bookModel,
             incomingData

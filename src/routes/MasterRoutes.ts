@@ -23,6 +23,8 @@ MasterRouter.get(
   MasterControllers.getAuthorById
 );
 
+MasterRouter.put("/authors/:id", MasterControllers.updateAuthor )
+
 MasterRouter.patch(
   "/authors/:id",
   MasterControllers.updateAuthor
@@ -34,8 +36,6 @@ MasterRouter.delete(
 );
 
 
-
-
 // =========================
 // Suppliers Routes
 // =========================
@@ -45,53 +45,12 @@ MasterRouter.get("/suppliers", MasterControllers.GetAllSuppliers)
 
 MasterRouter.post("/suppliers", MasterControllers.CreateSupplier)
 
+MasterRouter.put("/suppliers/:id", MasterControllers.UpdateSupplier)
+
+MasterRouter.delete("/suppliers/:id", MasterControllers.DeleteSupplier)
 
 
-
-
-
-
-
-
-
-
-
-
-
-// =========================
-// Categories Routes
-// =========================
-
-// MasterRouter.post(
-//   "/categories",
-//   MasterControllers.createCategory
-// );
-
-// MasterRouter.get(
-//   "/categories",
-//   MasterControllers.getAllCategories
-// );
-
-// MasterRouter.get(
-//   "/categories/:id",
-//   MasterControllers.getCategoryById
-// );
-
-// MasterRouter.patch(
-//   "/categories/:id",
-//   MasterControllers.updateCategory
-// );
-
-// MasterRouter.delete(
-//   "/categories/:id",
-//   MasterControllers.deleteCategory
-// );
-
-
-// =========================
-// Stationery Routes
-// =========================
-
+// Stationaries
 MasterRouter.post(
   "/stationeries",
   MasterControllers.createStationery
@@ -107,7 +66,8 @@ MasterRouter.get(
   MasterControllers.getStationeryById
 );
 
-MasterRouter.patch(
+
+MasterRouter.put(
   "/stationeries/:id",
   MasterControllers.updateStationery
 );
@@ -115,6 +75,18 @@ MasterRouter.patch(
 MasterRouter.delete(
   "/stationeries/:id",
   MasterControllers.deleteStationery
+);
+
+// Staionary reservations
+
+MasterRouter.post("/stationery-reservations", MasterControllers.createStationaryReservation)
+
+
+MasterRouter.get("/stationery-reservations", MasterControllers.getStationaryReservations)
+
+MasterRouter.patch(
+  "/stationery-reservations-status/:id",
+  MasterControllers.updateStationaryReservation
 );
 
 

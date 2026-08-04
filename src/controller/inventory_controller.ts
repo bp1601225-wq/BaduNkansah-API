@@ -3,7 +3,9 @@ import { InventoryModel } from "../services/inventory/inventoryModel";
 
 import ResponseWork from "../utilityResponse/Response";
 import { InventoryServices } from "../services/inventory/Inventory_services";
-import { BooksServices } from "../services/BookCatalogs/BookServices";
+
+
+
 const model = InventoryModel.Inventory;
 
 
@@ -109,15 +111,15 @@ export const InventoryController = {
       );
 
 
-    } catch(error) {
+    } catch(error:any) {
 
       console.log(error);
 
 
       ResponseWork.FailureResponse(
         500,
-        "There was an error updating inventory",
-        res
+error.mesage,
+       res
       );
 
     }

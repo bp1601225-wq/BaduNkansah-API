@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma";
+import { prisma } from "../../lib/prisma";
 
 export const CategoryModels = {
   book: prisma.bookCategory,
@@ -7,6 +7,7 @@ export const CategoryModels = {
 };
 
 export const CategoryService = {
+  
   create(model: any, data: any) {
     return model.create({ data });
   },

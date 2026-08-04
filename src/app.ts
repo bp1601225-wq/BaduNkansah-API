@@ -8,6 +8,11 @@ import CategoryRouter from "./routes/categoryRoutes";
 import { BooksRouter } from "./routes/BookRoutes";
 import { CustomerRouter } from "./routes/customerRoutes";
 import { InventoryRouter } from "./routes/inventoryRoutes";
+import RolesRouter from "./routes/roleRoutes";
+import EmployeeRouter from "./routes/EmployeeRoutes";
+import ExpenseRoutes from "./routes/ExpenseRoutes";
+import { PurchaseRouter } from "./routes/PurchaseRoutes";
+import { DashboardRouter } from "./routes/DashboardRoutes";
 
 const app = express();
 
@@ -36,5 +41,10 @@ app.use(CategoryRouter)
 app.use(BooksRouter)
 app.use(CustomerRouter)
 app.use(InventoryRouter)
+app.use(RolesRouter)
+app.use(EmployeeRouter)
+app.use(ExpenseRoutes)
+app.use(PurchaseRouter)
+app.use(DashboardRouter)
 
 export default app;

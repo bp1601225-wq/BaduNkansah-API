@@ -20,17 +20,18 @@ createdAt:true,
 updatedAt:true,
 
 
-book:{
+    book:{
 
-select:{
-bookTitle:true,
+    select:{
+    bookTitle:true,
 
-author:{
-select:{
-authorName:true
-}
-},
+    author:{
+    select:{
+    authorName:true
+    }
+    },
 
+        
 category:{
 select:{
 categoryName:true
@@ -45,7 +46,8 @@ categoryName:true
 stationary:{
 
 select:{
-name:true
+name:true,
+status:true
 }
 
 }
@@ -93,7 +95,14 @@ create(model:any, data:any){
 
 update(model:any, data:any){
 
-    const {id, bookId, stationaryId, quantity, status} = data
+    const {id, reason, quantity, status} = data
+
+const formattedQuantity = Number(quantity)
+
+
+if (typeof formattedQuantity !== "number" || isNaN(formattedQuantity)) {
+  throw new Error("Quantity must be a valid number");
+}
 
     return model.update({
         where:{
@@ -101,9 +110,8 @@ update(model:any, data:any){
         },
 
         data:{
-            bookId,
-            stationaryId,
-            quantity,
+            reason,
+            quantity:formattedQuantity,
             status
         }
     })

@@ -27,6 +27,7 @@ CategoryRouter.get(
   "/maintenance-categories/:id",
 CategoryController.maintenance.getById
 );
+
 CategoryRouter.put(
   "/maintenance-categories/:id",
   CategoryController.maintenance.update

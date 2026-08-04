@@ -1,17 +1,25 @@
 import { Request, Response } from "express";
-import { CategoryModels, CategoryService } from "../services/category_service";
+import { CategoryModels, CategoryService } from "../services/Masters/category_service";
 
 const createController = (model: any, name: string) => ({
     
   async create(req: Request, res: Response) {
     try {
-      const data = await CategoryService.create(model, req.body);
+
+      const incomingData = req.body
+
+      console.log(incomingData)
+
+      const data = await CategoryService.create(model, incomingData);
 
       return res.status(201).json({
         success: true,
         message: `${name} created successfully`,
         data,
       });
+
+
+
     } catch (error) {
       return res.status(500).json({
         success: false,

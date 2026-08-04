@@ -1,0 +1,21 @@
+{
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/generated": true,
+    "**/dist": true,
+    "**/.agents": true,
+    "**/.claude": true,
+    "**/prisma/migrations": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/generated/**": true,
+    "**/.git/**": true,
+    "**/dist/**": true,
+    "**/.agents/**": true,
+    "**/.claude/**": true,
+    "**/prisma/migrations/**": true
+  },
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": false
+}

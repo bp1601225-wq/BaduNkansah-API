@@ -113,6 +113,7 @@ model BookReturn {
 
   book            BookCatalog   @relation(fields: [bookId], references: [id])
 
+
   createdAt       DateTime      @default(now())
 
   updatedAt       DateTime      @updatedAt
@@ -146,6 +147,8 @@ model Customer {
 
 
   reservations BookReservation[]
+
+stationeryReservations StationeryReservation[]
 
 
 returns BookReturn[]
@@ -211,7 +214,6 @@ model Author {
 // =========================
 // CATEGORY
 // =========================
-
 
 
 
@@ -297,7 +299,7 @@ model BookReservation {
 // STATIONERY MANAGEMENT
 // =========================
 
-model Stationary {
+model   Stationary {
 
   id             String      @id @default(uuid())
 
@@ -312,11 +314,39 @@ model Stationary {
 
   purchaseItems  PurchaseItem[]
 
+reservations StationeryReservation[]
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
 
+
+model StationeryReservation {
+
+  id             String   @id @default(uuid())
+
+  customerId     String
+
+  stationaryId   String
+
+  quantity       Int      @default(1)
+ 
+  reservedDate   DateTime @default(now())
+
+  expiryDate     DateTime
+
+  status         ReservationStatus @default(ACTIVE)
+
+  notes          String?
+
+  customer       Customer?   @relation(fields: [customerId], references: [id])
+
+  stationary     Stationary? @relation(fields: [stationaryId], references: [id])
+
+  createdAt      DateTime @default(now())
+
+  updatedAt      DateTime @updatedAt
+}
 
 // =========================
 // INVENTORY MANAGEMENT
@@ -399,9 +429,6 @@ model Purchase {
   status         PurchaseStatus  @default(PENDING)
 
 
-  totalAmount    Decimal         @default(0)
-
-
 
   supplier       Supplier        @relation(fields: [supplierId], references: [id])
 
@@ -450,9 +477,7 @@ model PurchaseItem {
   stationary     Stationary? @relation(fields: [stationaryId], references: [id])
 }
 
-// =========================
-// STORE OPERATIONS
-// =========================
+
 
 
 // =========================
@@ -486,9 +511,13 @@ model Employee {
 model Role {
   id        String @id @default(uuid())
 
-  name      String
+  roleName      String
+
+  description   String
 
   employees Employee[]
+
+  permissions Permission[]
 
   createdAt DateTime @default(now())
 
@@ -547,3 +576,21 @@ model Expense {
 
 
 
+// Roles and Permissions
+
+
+model Permission {
+  id       String @id @default(uuid())
+  roleId   String
+  role     Role   @relation(fields: [roleId], references: [id])
+
+  module   String
+
+  view     Boolean @default(false)
+  create   Boolean @default(false)
+  edit     Boolean @default(false)
+  delete   Boolean @default(false)
+  approve  Boolean @default(false)
+  print    Boolean @default(false)
+  export   Boolean @default(false)
+}

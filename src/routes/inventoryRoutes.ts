@@ -17,7 +17,7 @@ InventoryRouter.post(
 );
 
 
-InventoryRouter.put(
-  "/inventory",
+InventoryRouter.patch(
+  "/inventory/:id",
   InventoryController.UpdateInventory
 );

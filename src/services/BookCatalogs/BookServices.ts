@@ -40,27 +40,11 @@ return model.findMany({
 
 },
 
-  create(model:any, data:any){
-
-    return model.create({
-
-        data:{
-            ...data,
-
-            reservedDate: data.reservedDate
-            ? new Date(data.reservedDate)
-            : new Date(),
-
-            expiryDate: data.expiryDate
-            ? new Date(data.expiryDate)
-            : new Date(),
-
-        }
-
-    })
-
+create(model: any, data: any) {
+  return model.create({
+    data,
+  });
 },
-
     update(model:any, data:any){
 const {id, bookTitle, buyingPrice, sellingPrice, status, isbn} = data
 
@@ -226,10 +210,11 @@ UpdateReservationStatus(model: any, data: any) {
       throw new Error("Reservation not found");
     }
     // If cancelling, restore inventory
-    if (
-      reservation.status !== "CANCELLED" &&
-      data.status === "CANCELLED"
-    ) {
+   if (
+  reservation.status !== "CANCELLED" &&
+  reservation.status !== "EXPIRED" &&
+  (data.status === "CANCELLED" || data.status === "EXPIRED")
+) {
       const inventory = await tx.inventory.findUnique({
         where: {
           bookId: reservation.bookId,

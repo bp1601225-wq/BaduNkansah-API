@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import MastersService from "../services/master_Services";
+import MastersService from "../services/Masters/master_Services";
 import ResponseWork from "../utilityResponse/Response";
 import { error } from "node:console";
 
@@ -159,7 +159,6 @@ async GetAllSuppliers(req:Request, res:Response, ){
       "Suppliers fetched Succesfully",
       data,
       res,
-
     )
 
   } catch (error){
@@ -205,142 +204,57 @@ ResponseWork.FailureResponse(
   }
 },
 
+async UpdateSupplier(req:Request, res:Response){
 
+try {
 
+  const id = req.params.id as string
+  const data = req.body
 
+let combinedData = {
+  id,
+  data
+}
+console.log(combinedData)
 
+const UpdatedSuppliers = await MastersService.UpdateSuppliers(combinedData)
 
+ResponseWork.SuccessResponse(201,
+  "Supplier updated succesfully",
+  UpdatedSuppliers,
+  res,
+)
 
+} catch (error){
+  console.log(error)
+  ResponseWork.FailureResponse(500,
+    "Failed to update Supplier",
+    res
+  )
+}
 
+},
 
+async DeleteSupplier (req:Request, res:Response){
+  try {
 
+    const incomingId = req.params.id as string
+    await MastersService.DeleteSupplier(incomingId)
 
-  // =========================
-  // Categories
+    ResponseWork.SuccessResponse(201,
+      "Supplier deleted succesfully",
+      incomingId,
+      res
+    )
+  } catch (error){
+    console.error(error)
 
-  // =========================
-
-
-  // async createCategory(req: Request, res: Response, next: NextFunction) {
-  //   try {
-
-  //     const category = await MastersService.createCategory(req.body);
-
-  //     return ResponseWork.SuccessResponse(
-  //       201,
-  //       "Category created successfully",
-  //       category,
-  //       res
-  //     );
-
-  //   } catch (error) {
-  //     return ResponseWork.FailureResponse(
-  //       400,
-  //       "Failed to create category",
-  //       res,
-  //       error
-  //     );
-  //   }
-  // },
-
-
-  // async getAllCategories(req: Request, res: Response, next: NextFunction) {
-  //   try {
-
-  //     const categories = await MastersService.getAllCategories();
-
-  //     return ResponseWork.SuccessResponse(
-  //       200,
-  //       "Categories fetched successfully",
-  //       categories,
-  //       res
-  //     );
-
-  //   } catch (error) {
-  //     return ResponseWork.FailureResponse(
-  //       400,
-  //       "Failed to fetch categories",
-  //       res,
-  //       error
-  //     );
-  //   }
-  // },
-
-
-  // async getCategoryById(
-  //    req: Request<{ id: string }>
-  //   , res: Response, next: NextFunction) {
-  //   try {
-
-  //     const { id } = req.params;
-
-  //     const category = await MastersService.getCategoryById(id);
-
-  //     return ResponseWork.SuccessResponse(
-  //       200,
-  //       "Category fetched successfully",
-  //       category,
-  //       res
-  //     );
-
-  //   } catch (error) {
-  //     return ResponseWork.FailureResponse(
-  //       400,
-  //       "Failed to fetch category",
-  //       res,
-  //       error
-  //     );
-  //   }
-  // },
-
-
-  // async updateCategory(req: Request, res: Response, next: NextFunction) {
-  //   try {
-
-  //     const category = await MastersService.updateCategory(req.body);
-
-  //     return ResponseWork.SuccessResponse(
-  //       200,
-  //       "Category updated successfully",
-  //       category,
-  //       res
-  //     );
-
-  //   } catch (error) {
-  //     return ResponseWork.FailureResponse(
-  //       400,
-  //       "Failed to update category",
-  //       res,
-  //       error
-  //     );
-  //   }
-  // },
-
-
-  // async deleteCategory(
-  //    req: Request<{ id: string }>, res: Response, next: NextFunction) {
-  //   try {
-
-  //     const { id } = req.params;
-
-  //     const category = await MastersService.deleteCategory(id);
-
-  //     return ResponseWork.SuccessResponse(
-  //       200,
-  //       "Category deleted successfully",
-  //       category,
-  //       res
-  //     );
-
-  //   } catch (error) {
-  //     return ResponseWork.FailureResponse(
-  //       400,
-  //       "Failed to delete category",
-  //       res,
-  //       error
-  //     );
-  //   }
-  // },
+    ResponseWork.FailureResponse(500,
+      "Something went wrong whilst deleting supplier",
+      res,
+    )
+  }
+},
 
 
   // =========================
@@ -384,6 +298,8 @@ ResponseWork.FailureResponse(
       );
 
     } catch (error) {
+console.log(error)
+
       return ResponseWork.FailureResponse(
         400,
         "Failed to fetch stationeries",
@@ -423,7 +339,14 @@ ResponseWork.FailureResponse(
   async updateStationery(req: Request, res: Response, next: NextFunction) {
     try {
 
-      const stationery = await MastersService.updateStationery(req.body);
+const incomingData = req.body
+
+console.log(incomingData)
+
+      const stationery = await MastersService.updateStationery(incomingData);
+
+
+
 
       return ResponseWork.SuccessResponse(
         200,
@@ -433,6 +356,9 @@ ResponseWork.FailureResponse(
       );
 
     } catch (error) {
+
+console.log(error)
+
       return ResponseWork.FailureResponse(
         400,
         "Failed to update stationery",
@@ -469,6 +395,92 @@ ResponseWork.FailureResponse(
     }
   },
 
+
+  // Create stationary Resevations
+  async createStationaryReservation(req:Request, res:Response){
+
+    try {
+
+const incomingData = req.body
+
+console.log(`Reservation data is`, incomingData)
+
+const reservedSationary = await MastersService.createStationaryReservation(incomingData)
+
+
+return ResponseWork.SuccessResponse(201,
+  "reservation created succesfully",
+  reservedSationary,
+  res
+  
+)
+    }
+     catch (error:any){
+      console.error(error)
+
+      return ResponseWork.FailureResponse(500, 
+        error.message,
+        res,
+      )
+    }
+
+  },
+
+  async getStationaryReservations(req:Request, res:Response){
+       try {
+
+
+
+const AllreservedSationary = await MastersService.getStationaryReservations()
+
+
+return ResponseWork.SuccessResponse(201,
+  "reservation fetched succesfully",
+AllreservedSationary,
+  res
+  
+)
+    } catch (error){
+      console.error(error)
+
+      return ResponseWork.FailureResponse(500, 
+        "error getting reserved stationary, something went wrong",
+        res,
+      )
+    }
+
+  },
+
+ async updateStationaryReservation(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+
+    const responseUpdate =
+      await MastersService.updateStationaryReservationStatus({
+        id,
+        status,
+      });
+
+      console.log(responseUpdate)
+
+    ResponseWork.SuccessResponse(
+      200,
+      "Stationery reservation updated successfully",
+      responseUpdate,
+      res
+    );
+  } catch (error: any) {
+    console.error(error);
+
+    ResponseWork.FailureResponse(
+      500,
+      error.message,
+      res
+    );
+  }
+}
 };
 
 export default MasterControllers;
