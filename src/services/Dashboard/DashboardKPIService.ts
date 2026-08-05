@@ -18,14 +18,7 @@ export const DashboardKPIService = {
       TotalReservedBooksQuantity,
 
 
-
-
-
-
-
-
-// Customers
-
+     // Customers
 
       totalCustomers,
 
@@ -54,6 +47,10 @@ export const DashboardKPIService = {
       pendingPurchases,
       completedPurchases,
 
+      totalPurchaseQuantity,
+      totalPurchasedAmount,
+      
+
       // Expenses
       totalExpenses,
       ExpenseGroupedByCategory,
@@ -66,7 +63,7 @@ export const DashboardKPIService = {
       activeReservations,
 
       // Purchase Items
-      purchaseItems,
+      // purchaseItems,
 
     ] = await Promise.all([
 
@@ -239,7 +236,11 @@ await prisma.bookReservation.aggregate({
         }
       }),
 
-
+      prisma.purchaseItem.aggregate({
+_sum:{
+  quantity:true
+}
+      }),
 
 
 
@@ -466,6 +467,8 @@ await prisma.bookReservation.aggregate({
 
 
       totalPurchaseCost,
+
+      totalPurchaseQuantity:totalPurchaseQuantity._sum.quantity,
 
 
 

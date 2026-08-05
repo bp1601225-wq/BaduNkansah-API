@@ -432,7 +432,7 @@ model Purchase {
 
   supplier       Supplier        @relation(fields: [supplierId], references: [id])
 
-
+  
   items          PurchaseItem[]
 
 

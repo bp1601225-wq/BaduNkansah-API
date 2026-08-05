@@ -32,4 +32,7 @@ PurchaseRouter.put(
 );
 
 
-// Delete purchase
+// -------------- PURCHASED ITEM --------------------- //
+PurchaseRouter.post("/purchase-item", PurchaseController.CreatePurchasedItem)
+
+PurchaseRouter.get("/purchase-item", PurchaseController.GetPurchasedItem)
