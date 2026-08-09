@@ -2,64 +2,64 @@ import { prisma } from "../../lib/prisma";
 
 export const PurchaseModel = {
 
-  GetAllPurchase() {
-    return prisma.purchase.findMany({
-      select: {
-        id: true,
+GetAllPurchase(status?: string) {
+  return prisma.purchase.findMany({
+    where: status
+      ? {
+          status: status as any, // or cast to your PurchaseStatus enum
+        }
+      : {},
 
-        supplierId: true,
+    select: {
+      id: true,
 
-        purchaseDate: true,
+      supplierId: true,
+      purchaseDate: true,
 
-        status: true,
+      status: true,
 
-
-        supplier: {
-          select: {
-            companyName: true,
-            contactName: true,
-            phone: true,
-            email: true,
-            address: true,
-            status: true,
-          },
+      supplier: {
+        select: {
+          companyName: true,
+          contactName: true,
+          phone: true,
+          email: true,
+          address: true,
+          status: true,
         },
-
-
-        items: {
-          select: {
-            id: true,
-
-            quantity: true,
-
-            costPrice: true,
-
-
-            book: {
-              select: {
-                id: true,
-                bookTitle: true,
-                sellingPrice: true,
-              },
-            },
-
-
-            stationary: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-
-
-        createdAt: true,
-
-        updatedAt: true,
       },
-    });
-  },
+
+      items: {
+        select: {
+          id: true,
+
+          quantity: true,
+
+          costPrice: true,
+
+          book: {
+            select: {
+              id: true,
+              bookTitle: true,
+              sellingPrice: true,
+            },
+          },
+
+          stationary: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+
+      createdAt: true,
+
+      updatedAt: true,
+    },
+  });
+},
 
 
   GetPurchaseById(id:string){
@@ -159,8 +159,7 @@ updatePurchase(data: any) {
 },
 
 
-
-// PurchasedItem
+// PurchasedItemasdasdas
 
 GetAllPurchasedItem() {
   return prisma.purchaseItem.findMany({

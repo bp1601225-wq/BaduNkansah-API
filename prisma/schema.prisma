@@ -405,6 +405,8 @@ model Supplier {
 
   purchases      Purchase[]
 
+  Assets         Assets[] @relation("Asset Suppliers")
+
   createdAt      DateTime @default(now())
 
   updatedAt      DateTime @updatedAt
@@ -593,4 +595,70 @@ model Permission {
   approve  Boolean @default(false)
   print    Boolean @default(false)
   export   Boolean @default(false)
+}
+
+
+// Asset Management
+
+model Assets {
+
+  id             String @id @default(uuid())
+
+  assetCode      String @unique
+  assetName      String
+
+  manufacturer   String?
+  notes          String
+  location       Location
+
+  purchaseDate   DateTime
+  purchaseCost   Decimal
+
+  category       AssetCategory
+  assetType      AssetType
+  status         AssetStatus @default(ACTIVE)
+
+
+  // Asset Supplier
+  supplierId     String 
+
+supplier Supplier? @relation("Asset Suppliers", fields: [supplierId], references: [id])
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+enum AssetCategory {
+  ELECTRONICS
+  OFFICE_EQUIPMENT
+  FURNITURE
+  VEHICLE
+  MACHINERY
+  APPLIANCE
+  BUILDING
+  LAND
+  TOOLS
+  SECURITY_EQUIPMENT
+  OTHER
+}
+
+
+enum AssetType {
+  BUSINESS
+  HOUSEHOLD
+}
+
+
+enum AssetStatus {
+  ACTIVE
+  UNDER_REPAIR
+  DAMAGED
+  LOST
+  DISPOSED
+}
+
+enum Location{
+  HOUSE
+  SHOP
 }

@@ -7,8 +7,12 @@ export const PurchaseController = {
   // Get All Purchases
   async GetAll(req: Request, res: Response) {
     try {
-      const AllData = await PurchaseModel.GetAllPurchase();
+      const status = req.query.status as string | undefined
 
+      const AllData = await PurchaseModel.GetAllPurchase(status);
+
+
+      
       ResponseWork.SuccessResponse(
         200,
         "All purchases fetched successfully",

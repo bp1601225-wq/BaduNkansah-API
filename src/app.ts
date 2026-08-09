@@ -12,7 +12,9 @@ import RolesRouter from "./routes/roleRoutes";
 import EmployeeRouter from "./routes/EmployeeRoutes";
 import ExpenseRoutes from "./routes/ExpenseRoutes";
 import { PurchaseRouter } from "./routes/PurchaseRoutes";
-import { DashboardRouter } from "./routes/DashboardRoutes";
+import { DashboardRouter } from "./routes/kpiRoutes/DashboardRoutes";
+import { AssetRoutes } from "./routes/AssetRoutes";
+import { AssetKpiRoutes } from "./routes/kpiRoutes/AssetKpiRoutes";
 
 const app = express();
 
@@ -46,5 +48,7 @@ app.use(EmployeeRouter)
 app.use(ExpenseRoutes)
 app.use(PurchaseRouter)
 app.use(DashboardRouter)
+app.use(AssetRoutes)
+app.use(AssetKpiRoutes)
 
 export default app;

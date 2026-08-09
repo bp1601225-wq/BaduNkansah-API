@@ -6,65 +6,69 @@ export const DashboardKPIService = {
 
     const [
 
-        // Books 
-      totalBooks,
-      booksInStock,
-      booksInLowStock,
-      booksOutOfStock,
-      AvgBookSellingPrice,
-      HighestSellingPrice,
-      LowestSellingPrice,
-      TotalBookReservations,
-      TotalReservedBooksQuantity,
+     // Books
+  totalBooks,
+  booksInStock,
+  booksInLowStock,
+  booksOutOfStock,
+  AvgBookSellingPrice,
+  HighestSellingPrice,
+  LowestSellingPrice,
+  TotalBookReservations,
+  TotalReservedBooksQuantity,
+
+  // Books and Reservations
+  BookReservations,
+  
+
+  // Customers
+  AllCustomers,
+  
+
+  // Suppliers
+  totalSuppliers,
+  activeSuppliers,
+  inactiveSuppliers,
+
+  // Employees
+  totalEmployees,
+
+  // Stationery
+  totalStationery,
+
+  // Inventory
+  totalInventoryUnits,
+  lowStockItems,
+  InStockItems,
+  OutOfStockItems,
+
+  // Authorsssss
+  totalAuthors,
+
+  // Purchases
+  totalPurchases,
+  pendingPurchases,
+  recievedPurchases,
+
+  PendingPurchaseAmount,
+  totalPurchaseQuantity,
+
+  
 
 
-     // Customers
+  // Expenses
+  totalExpenses,
+  ExpenseGroupedByCategory,
+  expenseCategories,
 
-      totalCustomers,
+  // Returns
+  totalReturns,
 
-      // Suppliers
-      totalSuppliers,
-      activeSuppliers,
-      inactiveSuppliers,
+  // Reservations
+  activeReservations,
 
-      // Employees
-      totalEmployees,
-
-      // Stationery
-      totalStationery,
-
-      // Inventory
-      totalInventoryUnits,
-      lowStockItems,
-      InStockItems,
-      OutOfStockItems,
-
-      // Authors
-      totalAuthors,
-
-      // Purchases
-      totalPurchases,
-      pendingPurchases,
-      completedPurchases,
-
-      totalPurchaseQuantity,
-      totalPurchasedAmount,
-      
-
-      // Expenses
-      totalExpenses,
-      ExpenseGroupedByCategory,
-      expenseCategories,
-
-      // Returns
-      totalReturns,
-
-      // Reservations
-      activeReservations,
-
-      // Purchase Items
-      // purchaseItems,
-
+  // Purchase Items (keep only if calculating totalPurchaseCost)
+  purchaseItems,
     ] = await Promise.all([
 
 
@@ -129,9 +133,11 @@ await prisma.bookReservation.aggregate({
 
 
 
-      // Customers
       prisma.bookReservation.count(),
 
+
+      // Customers
+await prisma.customer.count(),
 
 
       // =====================
@@ -232,9 +238,25 @@ await prisma.bookReservation.aggregate({
 
       prisma.purchase.count({
         where:{
-          status:"COMPLETED"
+          status:"RECEIVED"
         }
       }),
+
+
+prisma.purchaseItem.aggregate({
+  _sum:{
+    quantity:true
+  },
+
+    where:{
+     purchase:{
+           status:"PENDING"
+        }
+    }
+}),
+
+
+
 
       prisma.purchaseItem.aggregate({
 _sum:{
@@ -376,6 +398,7 @@ _sum:{
 
 
 
+    // Returned Objetcs
 
 
     return {
@@ -396,11 +419,13 @@ _sum:{
       TotalBookReservations,
       TotalReservedBooksQuantity:TotalReservedBooksQuantity._sum.quantity ,
 
+      BookReservations,
 
 
-    //   cusomers
+    //   cusmtomers
+      AllCustomers,
 
-      totalCustomers,
+
 
 
 
@@ -463,13 +488,14 @@ _sum:{
 
       pendingPurchases,
 
-      completedPurchases,
+      recievedPurchases,
 
 
       totalPurchaseCost,
 
       totalPurchaseQuantity:totalPurchaseQuantity._sum.quantity,
 
+      PendingPurchaseAmount:PendingPurchaseAmount._sum.quantity,
 
 
       // =====================
