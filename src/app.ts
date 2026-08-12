@@ -15,6 +15,8 @@ import { PurchaseRouter } from "./routes/PurchaseRoutes";
 import { DashboardRouter } from "./routes/kpiRoutes/DashboardRoutes";
 import { AssetRoutes } from "./routes/AssetRoutes";
 import { AssetKpiRoutes } from "./routes/kpiRoutes/AssetKpiRoutes";
+import { AuthRoutes } from "./routes/AuthenticationRoute";
+import { UsersRouter } from "./routes/UserRoutes";
 
 const app = express();
 
@@ -50,5 +52,7 @@ app.use(PurchaseRouter)
 app.use(DashboardRouter)
 app.use(AssetRoutes)
 app.use(AssetKpiRoutes)
+app.use(AuthRoutes)
+app.use(UsersRouter)
 
 export default app;

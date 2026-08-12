@@ -1,0 +1,8 @@
+Unit Price       → Gets from book
+Item Amount      → Quantity × Unit Price
+Subtotal         → Sum of item amounts
+Tax              → Calculated if applicable
+Total            → Subtotal - Discount + Tax
+Change           → Amount Paid - Total
+Sale Number      → Generated automatically
+Status           → Managed by system

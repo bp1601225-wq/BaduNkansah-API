@@ -85,9 +85,89 @@ enum ReturnStatus {
 
 
 
+
+
+
+
+
+// =========================
+// Sales Management
+// =========================
+
+enum SaleStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  MOBILE_MONEY
+  CARD
+  BANK_TRANSFER
+}
+
+
+
+model Sale {
+  id             String        @id @default(uuid())
+
+  // Business reference
+  saleNumber     String        @unique
+
+  // Customer
+  customerId     String?
+
+  // Transaction date
+  saleDate       DateTime      @default(now())
+
+  // Financial summary
+  subtotal       Decimal       @default(0)
+  discount       Decimal       @default(0)
+  tax            Decimal       @default(0)
+  totalAmount    Decimal       @default(0)
+
+  // Payment
+  amountPaid     Decimal       @default(0)
+  changeAmount   Decimal       @default(0)
+  paymentMethod  PaymentMethod?
+
+  // Transaction status
+  status         SaleStatus    @default(PENDING)
+
+  // Relations
+  customer       Customer?     @relation(fields: [customerId], references: [id])
+ 
+  items SaleItem[]
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+
+
+model SaleItem {
+  id        String  @id @default(uuid())
+
+  saleId    String
+  bookId    String
+
+  quantity  Int
+  unitPrice Decimal
+
+  sale      Sale        @relation(fields: [saleId], references: [id])
+  book      BookCatalog @relation(fields: [bookId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+
 // =========================
 // RETURN MANAGEMENT
 // =========================
+
+
+
 
 model BookReturn {
 
@@ -118,6 +198,9 @@ model BookReturn {
 
   updatedAt       DateTime      @updatedAt
 }
+
+
+
 // =========================
 // CUSTOMER MANAGEMENT
 // =========================
@@ -146,10 +229,13 @@ model Customer {
   notes       String?
 
 
+
+// Relation Ships
   reservations BookReservation[]
 
 stationeryReservations StationeryReservation[]
 
+sales   Sale[]
 
 returns BookReturn[]
 
@@ -239,6 +325,7 @@ model BookCatalog {
   authorId       String
   categoryId     String
 
+
   author         Author           @relation(fields: [authorId], references: [id])
 
   category       BookCategory     @relation(fields: [categoryId], references: [id])
@@ -249,9 +336,12 @@ model BookCatalog {
 
   reservations   BookReservation[]   
 
-  returns BookReturn[]
+  returns BookReturn[] 
 
+  sales SaleItem[]
+  
   createdAt      DateTime @default(now())
+
   updatedAt      DateTime @updatedAt
 }
 
@@ -265,6 +355,30 @@ enum ReservationStatus {
   CANCELLED
   EXPIRED
 }
+
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+// User
+model User {
+  id          String      @id @default(uuid())
+  userName    String      @unique
+  email       String      @unique
+  password    String
+  contact     String?     @unique
+  address     String?
+  status      UserStatus  @default(ACTIVE)
+
+  employeeId  String?     @unique
+  employee    Employee?   @relation(fields: [employeeId], references: [id])
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
 
 model BookReservation {
 
@@ -486,27 +600,20 @@ model PurchaseItem {
 // Employee Management
 // =========================
 
-
 model Employee {
-  id          String   @id @default(uuid())
-
+  id          String         @id @default(uuid())
   fullName    String
-
   phoneNumber String?
-
   roleId      String
-
-  role        Role @relation(fields: [roleId], references: [id])
-
+  role        Role           @relation(fields: [roleId], references: [id])
   salary      Decimal?
-
   status      EmployeeStatus @default(ACTIVE)
-
   hireDate    DateTime
 
-  createdAt   DateTime @default(now())
+  user        User?
 
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 
@@ -575,6 +682,7 @@ model Expense {
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
+
 
 
 

@@ -8,3 +8,26 @@ Reports & Analytics
 Barcode printing
 Notifications
 Loyalty programs
+
+
+// Caching //
+......................
+SET
+GET
+DEL
+EXPIRE
+TTL
+
+// Authentication
+What authentication actually is
+Register a user
+Hash passwords with bcrypt
+Login
+Generate JWT
+Authentication middleware
+Protect routes
+Get the currently logged-in user
+Refresh tokens
+Logout
+Roles & permissions (RBAC)
+Security practices

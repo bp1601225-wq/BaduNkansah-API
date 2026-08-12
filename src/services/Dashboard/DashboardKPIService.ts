@@ -53,9 +53,11 @@ export const DashboardKPIService = {
   PendingPurchaseAmount,
   totalPurchaseQuantity,
 
+  // ....... purchase by cost .................. //
+  costofPendingPurchase,
+  costofReceivedPurchase,
+
   
-
-
   // Expenses
   totalExpenses,
   ExpenseGroupedByCategory,
@@ -69,6 +71,11 @@ export const DashboardKPIService = {
 
   // Purchase Items (keep only if calculating totalPurchaseCost)
   purchaseItems,
+
+  // users 
+  totalUsers
+
+
     ] = await Promise.all([
 
 
@@ -265,6 +272,33 @@ _sum:{
       }),
 
 
+  
+      prisma.purchaseItem.findMany({
+        where:{
+          purchase:{
+            status:"PENDING",
+
+          },
+          
+          
+        },
+          select:{
+            quantity:true,
+            costPrice:true
+          }
+      }),
+
+     prisma.purchaseItem.findMany({
+      where:{
+        purchase:{
+          status:"RECEIVED"
+        }
+      }, select:{
+        quantity:true,
+        costPrice:true
+      }
+     }),
+      
 
       // =====================
       // EXPENSES
@@ -343,7 +377,12 @@ _sum:{
           quantity:true
         }
 
-      })
+      }),
+
+
+
+      // Users
+      prisma.user.count()
 
     ]);
 
@@ -492,6 +531,18 @@ _sum:{
 
 
       totalPurchaseCost,
+       
+      costofPendingPurchase: 
+      costofPendingPurchase.reduce(
+  (acc, curr) =>
+    acc + curr.quantity * Number(curr.costPrice),
+  0
+),
+
+costofReceivedPurchase:
+costofReceivedPurchase.reduce((acc, curr)=>(
+acc + curr.quantity * Number(curr.costPrice)
+),0),
 
       totalPurchaseQuantity:totalPurchaseQuantity._sum.quantity,
 
@@ -523,6 +574,8 @@ _sum:{
       // =====================
 
       activeReservations,
+
+      totalUsers
 
 
     };
