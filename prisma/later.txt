@@ -70,3 +70,11 @@ Security practices
     }
   }
 }
+
+
+
+
+
+
+Collection Rate = 
+Total Amount Paid ÷ Total Amount of Sales × 100

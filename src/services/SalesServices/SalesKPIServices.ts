@@ -40,9 +40,16 @@ CountOfItemsForSale,
 GrossSales,
 
 
+// inventory
+inventory,
+
+// GroupedBy Payment Method
+PaymentMethodsStats,
+
+
 ] = await Promise.all([
 
-// Total Saless
+// Total Saless~~
 prisma.sale.count(),
 
 // recent sales
@@ -70,7 +77,13 @@ prisma.sale.findMany({
 
             book:{
                 select:{
-                    bookTitle:true
+                    bookTitle:true,
+
+                    author:{
+                      select:{
+                        authorName:true
+                      }
+                    }
                 }
             }
       },
@@ -154,8 +167,27 @@ select:{
 quantity:true,
 unitPrice:true
 }
-})
+}),
 
+
+prisma.inventory.aggregate({
+  _sum:{
+    quantity:true
+  }, where:{
+    bookId:{
+      not:null
+    }
+  }
+}),
+
+prisma.sale.groupBy({
+  by:["paymentMethod"],
+  // _count:true,
+  _sum:{
+    totalAmount:true,
+    amountPaid:true
+  }
+})
 
 ])
 
@@ -176,8 +208,59 @@ return acc + (curr.quantity * curr.unitPrice)
 const  Formatted_RecenSales = RecentSales
 
 
+// discount Rate
+
+const discountAmount = Number(totalDiscountAmount._sum.discount ?? 0)
+
+const discountRate = (discountAmount / totalGrossSale) * 100
+
+// ================================================================
+// SELL-THROUGH RATE
+// Sell-Through Rate = Items Sold ÷ Total Available Inventory × 100
+// Total Available Inventory = Current Inventory + Items Sold
+// ================================================================
+const totalInventory = inventory._sum.quantity || 0;
+
+const QuantityOfItemsSold =
+  CountOfItemsForSale._sum.quantity || 0;
+
+const totalAvailableInventory =
+  totalInventory + QuantityOfItemsSold;
+
+const SellThroughRate =
+  totalAvailableInventory > 0
+    ? (QuantityOfItemsSold / totalAvailableInventory) * 100
+    : 0;
 
 
+
+
+
+    // .......................................................
+  const AmountPaid = totalAmountPaid._sum.amountPaid
+
+
+const CollectionRate = (Number(AmountPaid) / totalGrossSale) * 100
+
+    // .......................................................
+// Payment Method
+const PaymentMethodsCals = PaymentMethodsStats.map((items:any)=>{
+
+  const {_sum, paymentMethod} = items
+
+const {totalAmount, amountPaid} = _sum
+
+return {
+  totalAmount,
+  amountPaid,
+  paymentMethod
+}
+
+
+})
+
+
+    
 // Actual Returned API
 return {
 totalSalesCount,
@@ -206,10 +289,16 @@ totalAmountPaid:totalAmountPaid._sum.amountPaid,
 
 CountOfItemsForSale:CountOfItemsForSale._sum.quantity,
 
+ // Discount rate
+  discountRate,
 
+  SellThroughRate,
 
+  CollectionRate,
 
-}
+PaymentMethodsCals
+
+  }
 }
 
 
