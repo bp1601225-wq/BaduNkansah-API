@@ -6,7 +6,7 @@ import ResponseWork from "../utilityResponse/Response";
 
 const bookModel = BookModels.books;
 const reservationModel = BookModels.reservations;
-const inventoryModel = BookModels.inventory
+// const inventoryModel = BookModels.inventory
 
 
 export const BookController = {
@@ -16,7 +16,14 @@ async getAllBooks(req:Request, res:Response){
 
     try {
 
-        const BooksData = await BooksServices.getAll(bookModel)
+
+       const quantity = req.query.quantity
+  ? Number(req.query.quantity)
+  : undefined;
+
+        console.log(`params incoming is`, quantity)
+
+        const BooksData = await BooksServices.getAll(bookModel, quantity)
 
 
         ResponseWork.SuccessResponse(

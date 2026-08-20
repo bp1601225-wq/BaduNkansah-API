@@ -1,0 +1,146 @@
+async CreateSales(data: any) {
+
+  return prisma.$transaction(async (tx) => {
+
+    // ============================
+    // 1. VALIDATE CUSTOMER
+    // ============================
+
+    let customer = null;
+
+    if (data.customerId) {
+      customer = await tx.customer.findUnique({
+        where: {
+          id: data.customerId,
+        },
+      });
+
+      if (!customer) {
+        throw new Error("No such customer exists");
+      }
+    }
+
+    // ============================
+    // 2. GET ALL BOOK IDS
+    // ============================
+
+    const bookIds = data.items.map(
+      (item: any) => item.bookId
+    );
+
+    // ============================
+    // 3. GET ALL BOOKS
+    // ============================
+
+    const books = await tx.bookCatalog.findMany({
+      where: {
+        id: {
+          in: bookIds,
+        },
+      },
+    });
+
+    if (books.length !== bookIds.length) {
+      throw new Error("One or more books do not exist");
+    }
+
+    // ============================
+    // 4. GET ALL INVENTORY
+    // ============================
+
+    const inventories = await tx.inventory.findMany({
+      where: {
+        bookId: {
+          in: bookIds,
+        },
+      },
+    });
+
+    // ============================
+    // 5. CHECK STOCK
+    // ============================
+
+    for (const item of data.items) {
+
+      const inventory = inventories.find(
+        (inv) => inv.bookId === item.bookId
+      );
+
+      if (!inventory) {
+        throw new Error(
+          `No inventory found for book ${item.bookId}`
+        );
+      }
+
+      if (inventory.quantity < item.quantity) {
+        throw new Error(
+          `Insufficient stock for book ${item.bookId}`
+        );
+      }
+    }
+
+    // DON'T DO ANYTHING ELSE YET
+
+  });
+}
+
+
+
+The loop is currently only answering:
+
+"Can I fulfill this sale?"
+
+Once every item passes:
+
+Customer ✓
+Books ✓
+Inventory records ✓
+Stock available ✓
+
+
+  const SalesObj:SaleType = {
+    customerId:selectedCustomerId ,
+
+
+
+    items:[{
+      bookId:selectedBook?.id,
+      unitPrice:unitPrice,
+      quantity:salesQuantity,
+    }],
+
+
+
+
+    
+    discount:discountPercent,
+    amountPaid:amountPaid,
+    paymentMethod:paymentMethod
+  
+  }
+
+
+
+
+
+Customer
+   ↓
+Check books
+   ↓
+Check inventory
+   ↓
+Calculate subtotal
+   ↓
+Calculate discount
+   ↓
+Calculate total
+   ↓
+Calculate change
+   ↓
+Create Sale
+   ↓
+Create SaleItems
+   ↓
+Reduce inventory
+   ↓
+Return Sale

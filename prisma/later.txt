@@ -31,3 +31,42 @@ Refresh tokens
 Logout
 Roles & permissions (RBAC)
 Security practices
+
+
+
+{
+  "customer": {
+    "id": "28199c5b-2d90-4fe9-b653-960869206309",   //take
+    "firstName": "Yaw",
+    "lastName": "Badu Nkansah",
+    "email": "bp1601225@gmail.com",
+    "phone": "0247472306",
+    "address": "Kasoa-Tomefa",
+    "notes": "Most insight Customer ever",
+    "status": "ACTIVE",
+    "type": "REGULAR",
+    "createdAt": "2026-07-27T16:25:20.268Z"
+  },
+
+
+
+
+
+ 
+  "selectedBook": {
+    "id": "2cf68bea-529c-4dda-a2a9-7356401d39cd", //
+    "bookTitle": "Integrated Science",
+    "sellingPrice": "23",
+    "status": "ACTIVE",
+    "author": {
+      "authorName": "Donna Lamb",
+      "biography": ""
+    },
+    "category": {
+      "categoryName": "Learning and Writing",
+      "description": "",
+      "status": "ACTIVE",
+      "createdAt": "2026-07-26T04:51:49.154Z"
+    }
+  }
+}
