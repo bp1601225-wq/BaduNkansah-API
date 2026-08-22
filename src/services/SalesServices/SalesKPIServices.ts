@@ -95,7 +95,7 @@ prisma.sale.findMany({
     createdAt: "desc",
   },
 
-  take: 5,
+  take: 10,
 }),
 
 

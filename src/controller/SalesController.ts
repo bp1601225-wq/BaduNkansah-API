@@ -26,6 +26,9 @@ res
         )
     }
     },
+
+
+
  
    async  createSales(req:Request, res:Response){
 
@@ -36,6 +39,25 @@ const createSalesData = await SalesServiceModel.CreateSales(incomingData)
 ResponseWork.SuccessResponse(201, 
     "Sales succesfully recorded",
     createSalesData,
+    res
+)
+        } catch (error:any){
+            console.log(error)
+ResponseWork.FailureResponse(500,
+    error.message,
+    res
+)
+        }
+    },
+
+    async updateSales(req:Request, res:Response){
+  try {
+            const incomingData = req.body
+const updatedSalesData = await SalesServiceModel.updateSales(incomingData)
+
+ResponseWork.SuccessResponse(201, 
+    "Sales succesfully recorded",
+    updatedSalesData,
     res
 )
         } catch (error:any){

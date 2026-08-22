@@ -9,6 +9,7 @@ import { InventoryServices } from "../services/inventory/Inventory_services";
 const model = InventoryModel.Inventory;
 
 
+
 export const InventoryController = {
 
 

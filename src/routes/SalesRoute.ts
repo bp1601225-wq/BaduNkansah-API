@@ -7,3 +7,4 @@ export const SalesRoutes = Router()
 
 SalesRoutes.get("/sales", SalesController.GetAllSalesRecords)
 SalesRoutes.post('/sales', SalesController.createSales)
+SalesRoutes.put("/sales/:id", SalesController.updateSales)

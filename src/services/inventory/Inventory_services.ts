@@ -93,29 +93,67 @@ create(model:any, data:any){
 
 },
 
-update(model:any, data:any){
-
-    const {id, reason, quantity, status} = data
-
-const formattedQuantity = Number(quantity)
 
 
-if (typeof formattedQuantity !== "number" || isNaN(formattedQuantity)) {
-  throw new Error("Quantity must be a valid number");
+// update inventory 
+
+async update(model: any, data: any) {
+  const { id, reason, quantity } = data;
+
+  if (!id || !reason || quantity === undefined) {
+    throw new Error("Please provide all required fields");
+  }
+
+  const formattedQuantity = Number(quantity);
+
+  if (Number.isNaN(formattedQuantity) || formattedQuantity < 0) {
+    throw new Error("Quantity must be a valid non-negative number");
+  }
+
+  let status;
+
+  if (formattedQuantity === 0) {
+    status = "OUT_OF_STOCK";
+  } else if (formattedQuantity <= 10) {
+    status = "LOW_STOCK";
+  } else {
+    status = "IN_STOCK";
+  }
+
+  return await model.update({
+    where: {
+      id,
+    },
+    data: {
+      reason,
+      quantity: formattedQuantity,
+      status,
+    },
+  });
 }
+// update(model:any, data:any){
 
-    return model.update({
-        where:{
-            id,
-        },
+//     const {id, reason, quantity, status} = data
 
-        data:{
-            reason,
-            quantity:formattedQuantity,
-            status
-        }
-    })
-}
+// const formattedQuantity = Number(quantity)
+
+
+// if (typeof formattedQuantity !== "number" || isNaN(formattedQuantity)) {
+//   throw new Error("Quantity must be a valid number");
+// }
+
+//     return model.update({
+//         where:{
+//             id,
+//         },
+
+//         data:{
+//             reason,
+//             quantity:formattedQuantity,
+//             status
+//         }
+//     })
+// }
 
 
 
