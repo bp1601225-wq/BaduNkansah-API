@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import ResponseWork from "../utilityResponse/Response";
-import { DashboardKPIService } from "../services/Dashboard/DashboardKPI/DashboardKPIService";
+import { SuppliersKPIServices } from "../services/Dashboard/SuppliersKPI/SuppliersKPI";
 
-export const DashboardController = {
+export const SuppliersKPIController = {
 
-  // Get all dashboard KPIs
-  async GetDashboardKPI(req: Request, res: Response) {
+  // Get all supplier KPIs
+  async GetSuppliersKPI(req: Request, res: Response) {
     try {
-      const KpiData = await DashboardKPIService.GetDashboardKPI();
+      const KpiData = await SuppliersKPIServices.GetAllSuppliersKPI();
 
       ResponseWork.SuccessResponse(
         200,
-        "Dashboard KPIs fetched successfully",
+        "Supplier KPIs fetched successfully",
         KpiData,
         res
       );

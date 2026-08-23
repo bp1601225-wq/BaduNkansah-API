@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { DetailedSalesKPI } from "../services/SalesServices/SalesKPIServices";
+import { DetailedSalesKPI } from "../services/Dashboard/SalesServices/SalesKPIServices";
 import ResponseWork from "../utilityResponse/Response";
 
 export const SalesKPIController = {
