@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { SuppliersKPIController } from "../../controller/SupplierKPI";
+import { SuppliersKPIController } from "../../controller/SupplierKPIController";
 
 
 export const SuppliersKpiRoutes = Router();

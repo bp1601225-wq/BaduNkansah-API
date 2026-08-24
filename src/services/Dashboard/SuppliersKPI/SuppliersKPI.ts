@@ -3,6 +3,7 @@ import { SupplierKPIDates } from "./SupplierDateUtilities";
 
 export const SuppliersKPIServices = {
   async GetAllSuppliersKPI() {
+
     const [
       totalSuppliers,
       supplierStatus,
@@ -17,6 +18,9 @@ export const SuppliersKPIServices = {
 
       // Top Supplier
       TopSuppliers,
+
+    // top10 supplier
+    top10Suppliers,
     ] = await Promise.all([
       // 1. Total suppliers
       prisma.supplier.count(),
@@ -78,6 +82,37 @@ export const SuppliersKPIServices = {
         },
         take: 1,
       }),
+
+      prisma.supplier.findMany({
+        take: 5,
+
+
+        orderBy:{
+          purchases:{
+            _count:"desc"
+          }
+        },
+
+
+        select:{
+          companyName:true,
+          contactName:true,
+          phone:true,
+          email:true,
+          address:true,
+
+_count:{
+  select:{
+    purchases:true
+  }
+}
+
+        },
+
+        
+      })
+
+
     ]);
 
     // Get the actual supplier details
@@ -107,6 +142,8 @@ export const SuppliersKPIServices = {
 
       purchaseStatus,
 
+      top10Suppliers,
+
       totalQuantityPurchased:
         quantityOfPurchasedOrders._sum.quantity ?? 0,
 
@@ -127,4 +164,5 @@ export const SuppliersKPIServices = {
         : null,
     };
   },
+
 };

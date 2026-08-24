@@ -6,168 +6,133 @@ export const DashboardKPIService = {
 
     const [
 
-     // Books
-  totalBooks,
-  booksInStock,
-  booksInLowStock,
-  booksOutOfStock,
-  AvgBookSellingPrice,
-  HighestSellingPrice,
-  LowestSellingPrice,
-  TotalBookReservations,
-  TotalReservedBooksQuantity,
+      // Books
+      totalBooks,
+      booksInStock,
+      booksInLowStock,
+      booksOutOfStock,
+      AvgBookSellingPrice,
+      HighestSellingPrice,
+      LowestSellingPrice,
+      TotalBookReservations,
+      TotalReservedBooksQuantity,
 
-  // Books and Reservations
-  BookReservations,
-  
+      // Books and Reservations
+      BookReservations,
 
-  // Customers
-  AllCustomers,
-  
+      // Customers
+      AllCustomers,
 
-  // Suppliers
-  totalSuppliers,
-  activeSuppliers,
-  inactiveSuppliers,
 
-  // Employees
-  totalEmployees,
 
-  // Stationery
-  totalStationery,
+      // Employees
+      totalEmployees,
 
-  // Inventory
-  totalInventoryUnits,
-  lowStockItems,
-  InStockItems,
-  OutOfStockItems,
+      // Stationery
+      totalStationery,
 
-  // Authorsssss
-  totalAuthors,
+      // Inventory
+      totalInventoryUnits,
+      lowStockItems,
+      InStockItems,
+      OutOfStockItems,
 
-  // Purchases
-  totalPurchases,
-  pendingPurchases,
-  recievedPurchases,
+      // Authors
+      totalAuthors,
 
-  PendingPurchaseAmount,
-  totalPurchaseQuantity,
+      // Expenses
+      totalExpenses,
+      ExpenseGroupedByCategory,
+      expenseCategories,
 
-  // ....... purchase by cost .................. //
-  costofPendingPurchase,
-  costofReceivedPurchase,
+      // Returns
+      totalReturns,
 
-  
-  // Expenses
-  totalExpenses,
-  ExpenseGroupedByCategory,
-  expenseCategories,
+      // Reservations
+      activeReservations,
 
-  // Returns
-  totalReturns,
-
-  // Reservations
-  activeReservations,
-
-  // Purchase Items (keep only if calculating totalPurchaseCost)
-  purchaseItems,
-
-  // users 
-  totalUsers
-
+      // Users
+      totalUsers
 
     ] = await Promise.all([
 
+      // =====================
+      // BOOKS
+      // =====================
 
-      // Books
-prisma.bookCatalog.count(),
+      prisma.bookCatalog.count(),
 
+      prisma.inventory.count({
+        where: {
+          bookId: {
+            not: null,
+          },
+          status: "IN_STOCK",
+        },
+      }),
 
- prisma.inventory.count({
-  where: {
-    bookId: {
-      not: null,
-    },
-    status: "IN_STOCK",
-  },
-}),
+      prisma.inventory.count({
+        where: {
+          bookId: {
+            not: null,
+          },
+          status: "LOW_STOCK",
+        },
+      }),
 
-await prisma.inventory.count({
-  where: {
-    bookId: {
-      not: null,
-    },
-    status: "LOW_STOCK",
-  },
-}),
+      prisma.inventory.count({
+        where: {
+          bookId: {
+            not: null,
+          },
+          status: "OUT_OF_STOCK",
+        },
+      }),
 
+      prisma.bookCatalog.aggregate({
+        _avg: {
+          sellingPrice: true,
+        },
+      }),
 
- prisma.inventory.count({
-  where: {
-    bookId: {
-      not: null,
-    },
-    status: "OUT_OF_STOCK",
-  },
-}),
+      prisma.bookCatalog.aggregate({
+        _max: {
+          sellingPrice: true,
+        },
+      }),
 
-await prisma.bookCatalog.aggregate({
-  _avg: {
-    sellingPrice: true,
-  },
-}),
-
-await prisma.bookCatalog.aggregate({
-  _max: {
-    sellingPrice: true,
-  },
-}),
-
-await prisma.bookCatalog.aggregate({
-  _min: {
-    sellingPrice: true,
-  },
-}),
-
-
-await prisma.bookReservation.count(),
-
-await prisma.bookReservation.aggregate({
-  _sum: {
-    quantity: true,
-  },
-}),
-
-
+      prisma.bookCatalog.aggregate({
+        _min: {
+          sellingPrice: true,
+        },
+      }),
 
       prisma.bookReservation.count(),
 
+      prisma.bookReservation.aggregate({
+        _sum: {
+          quantity: true,
+        },
+      }),
 
-      // Customers
-await prisma.customer.count(),
+      // =====================
+      // BOOK RESERVATIONS
+      // =====================
 
+      prisma.bookReservation.count(),
+
+      // =====================
+      // CUSTOMERS
+      // =====================
+
+      prisma.customer.count(),
 
       // =====================
       // SUPPLIERS
       // =====================
 
-      prisma.supplier.count(),
 
-
-      prisma.supplier.count({
-        where:{
-          status:"ACTIVE"
-        }
-      }),
-
-
-      prisma.supplier.count({
-        where:{
-          status:"INACTIVE"
-        }
-      }),
-
-
+    
 
       // =====================
       // EMPLOYEES
@@ -175,50 +140,39 @@ await prisma.customer.count(),
 
       prisma.employee.count(),
 
-
-
       // =====================
       // STATIONERY
       // =====================
 
       prisma.stationary.count(),
 
-
-
-
       // =====================
       // INVENTORY
       // =====================
 
       prisma.inventory.aggregate({
-        _sum:{
-          quantity:true
-        }
+        _sum: {
+          quantity: true,
+        },
       }),
-
 
       prisma.inventory.count({
-        where:{
-          status:"LOW_STOCK"
-        }
+        where: {
+          status: "LOW_STOCK",
+        },
       }),
-
 
       prisma.inventory.count({
-        where:{
-          status:"IN_STOCK"
-        }
+        where: {
+          status: "IN_STOCK",
+        },
       }),
-
 
       prisma.inventory.count({
-        where:{
-          status:"OUT_OF_STOCK"
-        }
+        where: {
+          status: "OUT_OF_STOCK",
+        },
       }),
-
-
-
 
       // =====================
       // AUTHORS
@@ -226,123 +180,36 @@ await prisma.customer.count(),
 
       prisma.author.count(),
 
-
-
-
-      // =====================
-      // PURCHASES
-      // =====================
-
-      prisma.purchase.count(),
-
-
-      prisma.purchase.count({
-        where:{
-          status:"PENDING"
-        }
-      }),
-
-
-      prisma.purchase.count({
-        where:{
-          status:"RECEIVED"
-        }
-      }),
-
-
-prisma.purchaseItem.aggregate({
-  _sum:{
-    quantity:true
-  },
-
-    where:{
-     purchase:{
-           status:"PENDING"
-        }
-    }
-}),
-
-
-
-
-      prisma.purchaseItem.aggregate({
-_sum:{
-  quantity:true
-}
-      }),
-
-
-  
-      prisma.purchaseItem.findMany({
-        where:{
-          purchase:{
-            status:"PENDING",
-
-          },
-          
-          
-        },
-          select:{
-            quantity:true,
-            costPrice:true
-          }
-      }),
-
-     prisma.purchaseItem.findMany({
-      where:{
-        purchase:{
-          status:"RECEIVED"
-        }
-      }, select:{
-        quantity:true,
-        costPrice:true
-      }
-     }),
-      
-
       // =====================
       // EXPENSES
       // =====================
 
-
       prisma.expense.aggregate({
-        _sum:{
-          amount:true
-        }
+        _sum: {
+          amount: true,
+        },
       }),
-
-
 
       prisma.expense.groupBy({
-
-        by:[
-          "expenseCategoryId"
+        by: [
+          "expenseCategoryId",
         ],
 
-        _sum:{
-          amount:true
+        _sum: {
+          amount: true,
         },
 
-        _count:{
-          id:true
-        }
-
+        _count: {
+          id: true,
+        },
       }),
-
-
 
       prisma.expenseCategory.findMany({
-
-        select:{
-          id:true,
-          categoryName:true
-        }
-
+        select: {
+          id: true,
+          categoryName: true,
+        },
       }),
-
-
-
-
 
       // =====================
       // RETURNS
@@ -350,75 +217,39 @@ _sum:{
 
       prisma.bookReturn.count(),
 
-
-
-
       // =====================
       // RESERVATIONS
       // =====================
 
       prisma.bookReservation.count({
-        where:{
-          status:"ACTIVE"
-        }
+        where: {
+          status: "ACTIVE",
+        },
       }),
 
-
-
-
       // =====================
-      // PURCHASE ITEMS
+      // USERS
       // =====================
 
-      prisma.purchaseItem.findMany({
-
-        select:{
-          costPrice:true,
-          quantity:true
-        }
-
-      }),
-
-
-
-      // Users
-      prisma.user.count()
+      prisma.user.count(),
 
     ]);
 
 
+    // =====================
+    // EXPENSE CATEGORY DATA
+    // =====================
 
-
-    // Calculate purchase cost
-
-    const totalPurchaseCost = purchaseItems.reduce(
-
-      (sum,item)=>
-        sum + Number(item.costPrice) * item.quantity,
-
-      0
-
-    );
-
-
-
-
-    // Format expense category data
-
-    const expenseByCategory = ExpenseGroupedByCategory.map((item)=>{
-
+    const expenseByCategory = ExpenseGroupedByCategory.map((item) => {
 
       const category = expenseCategories.find(
-
-        (cat)=>
+        (cat) =>
           cat.id === item.expenseCategoryId
-
       );
-
 
       return {
 
-        categoryId:item.expenseCategoryId,
+        categoryId: item.expenseCategoryId,
 
         categoryName:
           category?.categoryName ?? "Unknown",
@@ -427,65 +258,63 @@ _sum:{
           Number(item._sum.amount ?? 0),
 
         totalExpenses:
-          item._count.id
+          item._count.id,
 
       };
-
 
     });
 
 
-
-
-    // Returned Objetcs
-
+    // =====================
+    // RETURN OBJECT
+    // =====================
 
     return {
 
-
       // =====================
-      // BASIC COUNTS
+      // BOOKS
       // =====================
 
       totalBooks,
 
       booksInStock,
+
       booksInLowStock,
+
       booksOutOfStock,
+
       AvgBookSellingPrice,
+
       HighestSellingPrice,
+
       LowestSellingPrice,
+
       TotalBookReservations,
-      TotalReservedBooksQuantity:TotalReservedBooksQuantity._sum.quantity ,
+
+      TotalReservedBooksQuantity:
+        TotalReservedBooksQuantity._sum.quantity,
 
       BookReservations,
 
 
-    //   cusmtomers
+      // =====================
+      // CUSTOMERS
+      // =====================
+
       AllCustomers,
-
-
-
 
 
       // =====================
       // SUPPLIERS
       // =====================
 
-      totalSuppliers,
-
-      activeSuppliers,
-
-      inactiveSuppliers,
-
 
 
       // =====================
-      // STAFF
+      // EMPLOYEES
       // =====================
 
       totalEmployees,
-
 
 
       // =====================
@@ -493,7 +322,6 @@ _sum:{
       // =====================
 
       totalStationery,
-
 
 
       // =====================
@@ -510,43 +338,11 @@ _sum:{
       OutOfStockItems,
 
 
-
       // =====================
       // AUTHORS
       // =====================
 
       totalAuthors,
-
-
-
-      // =====================
-      // PURCHASES
-      // =====================
-
-      totalPurchases,
-
-      pendingPurchases,
-
-      recievedPurchases,
-
-
-      totalPurchaseCost,
-       
-      costofPendingPurchase: 
-      costofPendingPurchase.reduce(
-  (acc, curr) =>
-    acc + curr.quantity * Number(curr.costPrice),
-  0
-),
-
-costofReceivedPurchase:
-costofReceivedPurchase.reduce((acc, curr)=>(
-acc + curr.quantity * Number(curr.costPrice)
-),0),
-
-      totalPurchaseQuantity:totalPurchaseQuantity._sum.quantity,
-
-      PendingPurchaseAmount:PendingPurchaseAmount._sum.quantity,
 
 
       // =====================
@@ -556,9 +352,7 @@ acc + curr.quantity * Number(curr.costPrice)
       totalExpenses:
         totalExpenses._sum.amount ?? 0,
 
-
       expenseByCategory,
-
 
 
       // =====================
@@ -568,15 +362,18 @@ acc + curr.quantity * Number(curr.costPrice)
       totalReturns,
 
 
-
       // =====================
       // RESERVATIONS
       // =====================
 
       activeReservations,
 
-      totalUsers
 
+      // =====================
+      // USERS
+      // =====================
+
+      totalUsers,
 
     };
 
