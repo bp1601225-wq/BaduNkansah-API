@@ -104,6 +104,7 @@ enum PaymentMethod {
 
 
 model Sale {
+
   id             String        @id @default(uuid())
 
   // Business reference
@@ -131,13 +132,14 @@ model Sale {
 
   // Relations
   customer       Customer?     @relation(fields: [customerId], references: [id])
- 
-  items SaleItem[]
+
+  items          SaleItem[]
+
+  saleVersion    SalesVersion[]
 
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 }
-
 
 
 model SaleItem {
@@ -146,16 +148,77 @@ model SaleItem {
   saleId    String
   bookId    String
 
+  SaleVersionId   String?   @unique
+
   quantity  Int
   unitPrice Decimal
 
   sale      Sale        @relation(fields: [saleId], references: [id])
   book      BookCatalog @relation(fields: [bookId], references: [id])
 
+
   createdAt DateTime @default(now())
 }
 
 
+
+model SalesVersion {
+
+  id             String             @id @default(uuid())
+
+  saleId         String
+
+  version        Int
+
+  customerId     String?
+
+  saleDate       DateTime
+
+  subtotal       Decimal
+  discount       Decimal
+  tax            Decimal
+  totalAmount    Decimal
+
+  amountPaid     Decimal
+  changeAmount   Decimal
+
+  paymentMethod  PaymentMethod?
+  status         SaleStatus
+
+  updateNote     String?
+
+  createdAt      DateTime           @default(now())
+
+  // sale            Sale               @relation(
+  //   fields: [saleId],
+  //   references: [id]
+  // )
+
+
+sale Sale @relation(fields: [saleId], references: [id])
+  items           SalesVersionItem[]
+
+  @@unique([saleId, version])
+}
+
+model SalesVersionItem {
+
+  id             String       @id @default(uuid())
+
+  salesVersionId String
+  bookId         String
+
+  quantity       Int
+  unitPrice      Decimal
+
+
+  saleVersion   SalesVersion @relation(fields: [salesVersionId], references: [id])
+
+ 
+  book  BookCatalog @relation(fields: [bookId], references: [id])
+
+  createdAt      DateTime     @default(now())
+}
 // =========================
 // RETURN MANAGEMENT
 // =========================
@@ -333,6 +396,8 @@ model BookCatalog {
   returns BookReturn[] 
 
   sales SaleItem[]
+
+  saleVersion SalesVersionItem[]
   
   createdAt      DateTime @default(now())
 
@@ -513,6 +578,7 @@ model Supplier {
 
   purchases      Purchase[]
 
+
   Assets         Assets[] @relation("Asset Suppliers")
 
   createdAt      DateTime @default(now())
@@ -529,23 +595,15 @@ model Purchase {
 
   id             String          @id @default(uuid())
 
-
   supplierId     String
-
 
   purchaseDate   DateTime        @default(now())
 
-
   status         PurchaseStatus  @default(PENDING)
 
-
-
   supplier       Supplier        @relation(fields: [supplierId], references: [id])
-
   
   items          PurchaseItem[]
-
-
 
   createdAt      DateTime @default(now())
 
@@ -763,4 +821,45 @@ enum AssetStatus {
 enum Location{
   HOUSE
   SHOP
+}
+
+
+
+// Loans
+
+enum LoanType {
+  BORROWED
+  LENT
+}
+
+enum LoanStatus {
+  ACTIVE
+  COMPLETED
+  OVERDUE
+  CANCELLED
+}
+
+model Loan {
+  id String @id @default(uuid())
+
+  // Basic loan information
+  type LoanType
+
+  personName String
+  phone       String?
+
+  amount      Decimal
+  amountPaid  Decimal @default(0)
+
+  // Dates
+  loanDate DateTime @default(now())
+  dueDate  DateTime?  
+
+  // Status
+  status LoanStatus @default(ACTIVE)
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

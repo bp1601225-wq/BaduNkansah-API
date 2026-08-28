@@ -1,4 +1,5 @@
 import {prisma} from "../../lib/prisma"
+import { AuthRoutes } from "../../routes/AuthenticationRoute";
 import { CategoryService, CategoryModels } from "./category_service";;
 
 const MastersService = {
@@ -6,20 +7,33 @@ const MastersService = {
   // Authors
   // =========================
 
-  createAuthor(data:any) {
+  async createAuthor(data:any) {
 
-    return prisma.author.create({
-      data:{
-        ...data,
-        createdAt:data
-
+    const AuthorModel = await prisma.author.findMany({
+      select:{
+        authorName:true
       }
     })
+
+    const isAuthorExists = AuthorModel.some((checks:any)=>{
+      return checks.authorName === data.authorName
+    })
   
+    if (isAuthorExists){
+      throw new Error (`${data.authorName} already exists`)
+    }
+
+
+    const createdAuthor = await prisma.author.create({
+      data
+    })
+
+    return createdAuthor
   },
 
   getAllAuthors() {
 return prisma.author.findMany({
+
   select:{
 
 id:true,
@@ -66,20 +80,38 @@ id:authorId
 })
   },
 
-  updateAuthor(data:any) {
+ async updateAuthor(data:any) {
 
-const {id, authorName, biography} = data
+    const {id, authorName,  biography} = data
 
-    return prisma.author.update({
-      where:{
-        id
-      },  
+const AuthorModel = await prisma.author.findMany({
+  select:{
+    authorName:true
+  }
+})
 
-      data:{
-        authorName,
-        biography
-      }
-    })
+
+const isExists = AuthorModel.some((exists:any)=>{
+  return exists.authorName === authorName
+})
+
+if (isExists){
+  throw new Error (`${authorName} already exists` )
+}
+
+const EditedAuthor = await prisma.author.update({
+  where:{
+    id
+  },
+
+  data:{
+    authorName,
+    biography
+  }
+})
+
+
+return EditedAuthor
 
   },
 

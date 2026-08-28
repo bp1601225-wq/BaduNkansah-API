@@ -27,10 +27,13 @@ const MasterControllers = {
         res
       );
 
-    } catch (error) {
+    } catch (error:any) {
+
+console.log(error)
+
       return ResponseWork.FailureResponse(
         400,
-        "Failed to create author",
+        error.message,
         res,
         error
       );
@@ -102,10 +105,10 @@ const MasterControllers = {
         res
       );
 
-    } catch (error) {
+    } catch (error:any) {
       return ResponseWork.FailureResponse(
         400,
-        "Failed to update author",
+error.message,
         res,
         error
       );

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/Users/UserService";
 import ResponseWork from "../utilityResponse/Response";
+import { UserSchema } from "../Validations/validations";
 
 export const UserController = {
   async GetAllUser(req: Request, res: Response) {
@@ -47,28 +48,40 @@ export const UserController = {
     }
   },
 
-  async CreateUser(req: Request, res: Response) {
-    try {
-      const incomingData = req.body;
+async CreateUser(req: Request, res: Response) {
+  try {
+    const incomingData = req.body;
 
-      const newUser = await UserService.CreateUser(incomingData);
 
-      return ResponseWork.SuccessResponse(
-        201,
-        "User created successfully.",
-        newUser,
-        res
-      );
-    } catch (error: any) {
-      console.error(error);
+    const { error, value } = UserSchema.validate(incomingData);
 
+    if (error) {
       return ResponseWork.FailureResponse(
-        500,
-        error.message || "Failed to create user.",
+        400,
+        error.message,
         res
       );
     }
-  },
+
+    const newUser = await UserService.CreateUser(value);
+
+    return ResponseWork.SuccessResponse(
+      201,
+      "User created successfully.",
+      newUser,
+      res
+    );
+
+  } catch (error: any) {
+    console.error(error);
+
+    return ResponseWork.FailureResponse(
+      500,
+      error.message || "Failed to create user.",
+      res
+    );
+  }
+},
 
   async UpdateUser(req: Request, res: Response) {
     try {

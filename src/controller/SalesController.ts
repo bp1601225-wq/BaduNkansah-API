@@ -52,14 +52,18 @@ ResponseWork.FailureResponse(500,
 
     async updateSales(req:Request, res:Response){
   try {
+
             const incomingData = req.body
+
+console.log(`updated sales payload is`, incomingData)
+
 const updatedSalesData = await SalesServiceModel.updateSales(incomingData)
 
 ResponseWork.SuccessResponse(201, 
     "Sales succesfully recorded",
     updatedSalesData,
     res
-)
+) 
         } catch (error:any){
             console.log(error)
 ResponseWork.FailureResponse(500,

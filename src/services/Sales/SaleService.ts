@@ -1,3 +1,4 @@
+import { CustomerController } from "../../controller/customer_controller";
 import { prisma } from "../../lib/prisma";
 
 export const SalesServiceModel = {
@@ -22,11 +23,20 @@ GetAllSales(data?: any) {
       paymentMethod: true,
       status: true,
 
-      // _count: {
-      //   select: {
-      //     items: true,
-      //   },
-      // },
+      _count: {
+        select: {
+          items: true,
+        },
+      },
+
+
+      items:{
+        select:{
+          bookId:true,
+          quantity:true,
+          unitPrice:true
+        }
+      },
 
 
 
@@ -252,79 +262,85 @@ GetAllSales(data?: any) {
   },
 
 
+  
+
 updateSales(data: any) {
   return prisma.$transaction(async (tx) => {
 
-    const {
-      id,
-      customerId,
-      items,
-      discount = 0,
-      amountPaid,
-      paymentMethod,
-    } = data;
-
     // ==============================
-    // VALIDATION
+    // 1. FIND OLD SALE
     // ==============================
 
-    if (!id) {
+    let sale = null;
+
+    if (data.id) {
+      sale = await tx.sale.findUnique({
+        where: {
+          id: data.id,
+        },
+        include: {
+          items: true,
+        },
+      });
+    }
+
+    if (!sale) {
       throw new Error(
-        "The sale you are updating does not exist"
+        "The sale you are trying to update does not exist"
       );
     }
 
-    if (!items || items.length === 0) {
-      throw new Error(
-        "A sale must contain at least one item"
-      );
+    // ==============================
+    // 2. GET OLD SALE ITEMS
+    // ==============================
+
+    const oldItems = sale.items;
+
+    // ==============================
+    // 3. RESTORE OLD INVENTORY
+    // ==============================
+
+    for (const item of oldItems) {
+      await tx.inventory.updateMany({
+        where: {
+          bookId: item.bookId,
+        },
+        data: {
+          quantity: {
+            increment: item.quantity,
+          },
+        },
+      });
     }
 
     // ==============================
-    // CUSTOMER
+    // 4. CUSTOMER
     // ==============================
 
     let customer = null;
 
-    if (customerId) {
+    if (data.customerId) {
       customer = await tx.customer.findUnique({
         where: {
-          id: customerId,
+          id: data.customerId,
         },
       });
 
       if (!customer) {
-        throw new Error(
-          "The customer you are trying to assign does not exist"
-        );
+        throw new Error("Customer does not exist");
       }
     }
 
     // ==============================
-    // GET EXISTING SALE
+    // 5. GET NEW BOOK IDS
     // ==============================
 
-    const existingSale = await tx.sale.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        items: true,
-      },
+    const bookIds = data.items.map((item: any) => {
+      return item.bookId;
     });
 
-    if (!existingSale) {
-      throw new Error("Sale does not exist");
-    }
-
     // ==============================
-    // GET BOOK IDS
-    // ==============================
-
-    const bookIds = items.map((item: any) => item.bookId);
-
-    // ==============================
-    // FIND BOOKS
+    // 6. FIND NEW BOOKS
     // ==============================
 
     const books = await tx.bookCatalog.findMany({
@@ -335,14 +351,12 @@ updateSales(data: any) {
       },
     });
 
-    if (books.length !== bookIds.length) {
-      throw new Error(
-        "One or more books do not exist"
-      );
+    if (bookIds.length !== books.length) {
+      throw new Error("One or more books do not exist");
     }
 
     // ==============================
-    // FIND INVENTORIES
+    // 7. FIND NEW INVENTORIES
     // ==============================
 
     const inventories = await tx.inventory.findMany({
@@ -354,12 +368,10 @@ updateSales(data: any) {
     });
 
     // ==============================
-    // CALCULATE INVENTORY DIFFERENCE
+    // 8. CHECK NEW INVENTORY
     // ==============================
 
-    for (const item of items) {
-
-      // find all inventory with bookId
+    for (const item of data.items) {
       const inventory = inventories.find(
         (inv: any) => inv.bookId === item.bookId
       );
@@ -370,131 +382,51 @@ updateSales(data: any) {
         );
       }
 
-      // Find how many were previously sold
-      const oldItem = existingSale.items.find(
-        (old: any) => old.bookId === item.bookId
-      );
-
-      const oldQuantity = oldItem
-        ? oldItem.quantity
-        : 0;
-
-      const newQuantity = Number(item.quantity);
-
-      // Difference between old and new sale
-      const quantityDifference =
-        newQuantity - oldQuantity;
-
-      // If quantity increased
-      if (quantityDifference > 0) {
-
-        if (
-          inventory.quantity < quantityDifference
-        ) {
-          throw new Error(
-            `Not enough stock for ${item.bookId}`
-          );
-        }
-
-        await tx.inventory.updateMany({
-          where: {
-            bookId: item.bookId,
-          },
-          data: {
-            quantity: {
-              decrement: quantityDifference,
-            },
-          },
-        });
-      }
-
-      // If quantity decreased
-      if (quantityDifference < 0) {
-
-        await tx.inventory.updateMany({
-          where: {
-            bookId: item.bookId,
-          },
-          data: {
-            quantity: {
-              increment: Math.abs(quantityDifference),
-            },
-          },
-        });
-      }
-    }
-
-    // ==============================
-    // HANDLE REMOVED ITEMS
-    // ==============================
-
-
-
-    for (const oldItem of existingSale.items) {
-
-      const stillExists = items.find(
-        (item: any) =>
-          item.bookId === oldItem.bookId
-      );
-
-      if (!stillExists) {
-
-        await tx.inventory.updateMany({
-          where: {
-            bookId: oldItem.bookId,
-          },
-          data: {
-            quantity: {
-              increment: oldItem.quantity,
-            },
-          },
-        });
-      }
-    }
-
-    // ==============================
-    // SALES CALCULATIONS
-    // ==============================
-
-    const subtotal = items.reduce(
-      (acc: number, curr: any) => {
-        return (
-          acc +
-          Number(curr.quantity) *
-            Number(curr.unitPrice)
+      if (inventory.quantity < item.quantity) {
+        throw new Error(
+          `Not enough stock for ${item.bookId}`
         );
+      }
+    }
+
+    // ==============================
+    // 9. SALES CALCULATIONS
+    // ==============================
+
+    const subtotal = data.items.reduce(
+      (acc: number, curr: any) => {
+        return acc + curr.quantity * curr.unitPrice;
       },
       0
     );
 
     // ==============================
-    // DISCOUNT
+    // 10. DISCOUNT
     // ==============================
 
-    const discountPercentage = Number(discount) || 0;
+    const discountPercentage = data.discount || 0;
 
-    const discountAmount =
-      subtotal *
-      (discountPercentage / 100);
+    const discount =
+      subtotal * (discountPercentage / 100);
 
     // ==============================
-    // TAX
+    // 11. TAX
     // ==============================
 
     const tax = 0;
 
     // ==============================
-    // TOTAL
+    // 12. TOTAL
     // ==============================
 
     const totalAmount =
-      subtotal -
-      discountAmount +
-      tax;
+      subtotal - discount + tax;
 
     // ==============================
-    // AMOUNT PAID
+    // 13. AMOUNT PAID
     // ==============================
+
+    const amountPaid = data.amountPaid;
 
     if (
       amountPaid === undefined ||
@@ -505,72 +437,80 @@ updateSales(data: any) {
       );
     }
 
-    if (Number(amountPaid) < totalAmount) {
+    if (amountPaid < totalAmount) {
       throw new Error(
         "Amount paid cannot be less than the total amount"
       );
     }
 
     // ==============================
-    // CHANGE
+    // 14. CHANGE
     // ==============================
 
     const changeAmount =
-      Number(amountPaid) - totalAmount;
+      amountPaid - totalAmount;
 
     // ==============================
-    // UPDATE SALE
+    // 15. UPDATE SALE
     // ==============================
 
-    const updatedSale =
-      await tx.sale.update({
-        where: {
-          id,
+    const updatedSale = await tx.sale.update({
+      where: {
+        id: data.id,
+      },
+
+      data: {
+        customerId: data.customerId ?? null,
+
+        subtotal,
+        discount,
+        tax,
+        totalAmount,
+        amountPaid,
+        changeAmount,
+
+        paymentMethod: data.paymentMethod,
+
+        items: {
+          deleteMany: {},
+
+          create: data.items.map((item: any) => ({
+            bookId: item.bookId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+          })),
         },
+      },
 
+      include: {
+        items: true,
+      },
+    });
+
+    // ==============================
+    // 16. REDUCE INVENTORY
+    // ==============================
+
+    for (const item of data.items) {
+      await tx.inventory.updateMany({
+        where: {
+          bookId: item.bookId,
+        },
         data: {
-          customerId: customerId ?? null,
-
-          subtotal,
-
-          discount: discountAmount,
-
-          tax,
-
-          totalAmount,
-
-          amountPaid: Number(amountPaid),
-
-          changeAmount,
-
-          paymentMethod,
-
-          items: {
-            deleteMany: {},
-
-            create: items.map(
-              (item: any) => ({
-                bookId: item.bookId,
-                quantity: Number(item.quantity),
-                unitPrice: Number(item.unitPrice),
-              })
-            ),
+          quantity: {
+            decrement: item.quantity,
           },
         },
-
-        include: {
-          items: true,
-          customer: true,
-        },
       });
+    }
 
     // ==============================
-    // RETURN
+    // 17. RETURN UPDATED SALE
     // ==============================
 
     return updatedSale;
   });
-},
+}
 
 
 

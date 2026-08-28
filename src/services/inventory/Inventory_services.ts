@@ -96,31 +96,37 @@ create(model:any, data:any){
 
 
 // update inventory 
-
 async update(model: any, data: any) {
   const { id, reason, quantity } = data;
 
-  if (!id || !reason || quantity === undefined) {
+  // Validate required fields
+  if (!id || !reason || quantity === undefined || quantity === null) {
     throw new Error("Please provide all required fields");
   }
 
+  // Convert quantity to number
   const formattedQuantity = Number(quantity);
 
-  if (Number.isNaN(formattedQuantity) || formattedQuantity < 0) {
-    throw new Error("Quantity must be a valid non-negative number");
+  // Validate quantity
+  if (
+    !Number.isFinite(formattedQuantity) ||
+    formattedQuantity < 0
+  ) {
+    throw new Error(
+      "Quantity must be a valid non-negative number"
+    );
   }
 
-  let status;
+  // Determine inventory status
+  const status =
+    formattedQuantity === 0
+      ? "OUT_OF_STOCK"
+      : formattedQuantity <= 10
+        ? "LOW_STOCK"
+        : "IN_STOCK";
 
-  if (formattedQuantity === 0) {
-    status = "OUT_OF_STOCK";
-  } else if (formattedQuantity <= 10) {
-    status = "LOW_STOCK";
-  } else {
-    status = "IN_STOCK";
-  }
-
-  return await model.update({
+  // Update inventory
+  return model.update({
     where: {
       id,
     },
