@@ -839,24 +839,47 @@ enum LoanStatus {
   CANCELLED
 }
 
+
 model Loan {
+
   id String @id @default(uuid())
 
   // Basic loan information
-  type LoanType
-
+  type       LoanType
   personName String
-  phone       String?
+  phone      String?
 
-  amount      Decimal
-  amountPaid  Decimal @default(0)
+  amount     Decimal
+  amountPaid Decimal @default(0)
 
   // Dates
-  loanDate DateTime @default(now())
-  dueDate  DateTime?  
+  loanDate DateTime  @default(now())
+  dueDate  DateTime?
 
   // Status
   status LoanStatus @default(ACTIVE)
+
+  notes String?
+
+  // Payment history
+  payments LoanPayment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model LoanPayment {
+
+  id String @id @default(uuid())
+
+  // Loan relationship
+  loanId String
+  loan   Loan   @relation(fields: [loanId], references: [id], onDelete: Cascade)
+
+  // Payment information
+  amount      Decimal
+  paymentDate DateTime @default(now())
 
   notes String?
 
