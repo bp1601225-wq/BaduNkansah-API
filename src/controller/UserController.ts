@@ -48,6 +48,7 @@ export const UserController = {
     }
   },
 
+  
 async CreateUser(req: Request, res: Response) {
   try {
     const incomingData = req.body;

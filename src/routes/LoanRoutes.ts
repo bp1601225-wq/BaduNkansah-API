@@ -36,6 +36,12 @@ LoansRouter.put(
 
 
 
+LoansRouter.delete(
+  "/loans/:id",
+  LoanController.DeleteLoan
+);
+
+
 // LoansRouter.patch(
 //   "/loans/:id",
 //   LoanController.UpdateLoan
@@ -46,4 +52,7 @@ LoansRouter.put(
 //   "/loans/:id",
 //   LoanController.DeleteLoan
 // );
+
+
+
 

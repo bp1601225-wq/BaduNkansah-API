@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import ResponseWork from "../utilityResponse/Response";
 import { LoansService } from "../services/Loans/LoanService";
+import { CreateLoanSchema } from "../Validations/validations";
 
 export const LoanController = {
 
@@ -93,11 +94,21 @@ export const LoanController = {
 
       const incomingdata = req.body;
 
+      const {error, value} = CreateLoanSchema.validate(incomingdata)  
+
+        if (error) {
+      return ResponseWork.FailureResponse(
+        400,
+        error.message,
+        res
+      );
+    }
+
       console.log(incomingdata);
 
       const Loan = await LoansService.UpdateLoan({
         // id: req.params.id,
-        ...incomingdata
+        ...value
       });
 
       ResponseWork.SuccessResponse(
@@ -153,31 +164,31 @@ export const LoanController = {
   },
 
 
-//   async DeleteLoan(req: Request, res: Response) {
-//     try {
+  async DeleteLoan(req: Request, res: Response) {
+    try {
 
-//       const { id } = req.params;
+      const { id } = req.params;
 
-//       const Loan = await LoansService.DeleteLoan(id as string);
+      const Loan = await LoansService.DeleteLoans(id as string);
 
-//       ResponseWork.SuccessResponse(
-//         200,
-//         "Loan Deleted Successfully",
-//         Loan,
-//         res
-//       );
+      ResponseWork.SuccessResponse(
+        200,
+        "Loan Deleted Successfully",
+        Loan,
+        res
+      );
 
-//     } catch (error: any) {
+    } catch (error: any) {
 
-//       console.log(error);
+      console.log(error);
 
-//       ResponseWork.FailureResponse(
-//         500,
-//         error.message,
-//         res
-//       );
+      ResponseWork.FailureResponse(
+        500,
+        error.message,
+        res
+      );
 
-//     }
-//   }
+    }
+  }
 
 };

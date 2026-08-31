@@ -21,6 +21,7 @@ import { SalesRoutes } from "./routes/SalesRoute";
 import { SalesKPIRoutes } from "./routes/SalesKPIRoutes";
 import { SuppliersKpiRoutes } from "./routes/kpiRoutes/SupplierKPIRoutes";
 import { LoansRouter } from "./routes/LoanRoutes";
+import { loansKPIRoutes } from "./routes/kpiRoutes/LoanKPI_Routes";
 
 const app = express();
 
@@ -59,10 +60,12 @@ app.use(AssetKpiRoutes)
 app.use(AuthRoutes)
 app.use(UsersRouter)
 app.use(SalesRoutes)
+app.use(LoansRouter)
+
 
 //  KPI rpoutes
 app.use(SalesKPIRoutes)
 app.use(SuppliersKpiRoutes)
-app.use(LoansRouter)
+app.use(loansKPIRoutes)
 
 export default app;

@@ -874,7 +874,7 @@ model LoanPayment {
   id String @id @default(uuid())
 
   // Loan relationship
-  loanId String
+  loanId String @unique
   loan   Loan   @relation(fields: [loanId], references: [id], onDelete: Cascade)
 
   // Payment information
