@@ -592,7 +592,6 @@ model Supplier {
 
   purchases      Purchase[]
 
-
   Assets         Assets[] @relation("Asset Suppliers")
 
   createdAt      DateTime @default(now())

@@ -2,11 +2,19 @@ import { Request, Response } from "express";
 import { UserService } from "../services/Users/UserService";
 import ResponseWork from "../utilityResponse/Response";
 import { UserSchema } from "../Validations/validations";
+import { UserStatus } from "../../generated/prisma/enums";
 
 export const UserController = {
   async GetAllUser(req: Request, res: Response) {
     try {
-      const allUsers = await UserService.GetAllUser();
+
+      const search = req.query.search as string
+      const status = req.query.status as UserStatus
+
+
+      const allUsers = await UserService.GetAllUser(search,
+        status
+      );
 
       return ResponseWork.SuccessResponse(
         200,
@@ -64,7 +72,7 @@ async CreateUser(req: Request, res: Response) {
       );
     }
 
-    const newUser = await UserService.CreateUser(value);
+    const newUser = await UserService.CreateUser(incomingData);
 
     return ResponseWork.SuccessResponse(
       201,

@@ -1,3 +1,4 @@
+import { StockStatus, SupplierStatus } from "../../../generated/prisma/enums";
 import {prisma} from "../../lib/prisma"
 import { AuthRoutes } from "../../routes/AuthenticationRoute";
 import { CategoryService, CategoryModels } from "./category_service";;
@@ -132,8 +133,49 @@ return EditedAuthor
   // =========================
 
 
- GetAllSuppliers(){
+ GetAllSuppliers(search?:string, status?:SupplierStatus){
   return prisma.supplier.findMany({
+
+
+    where:{
+
+      ...(search && {
+        OR:[
+          {
+            companyName:{
+              contains:search
+            }
+          }, {
+            contactName:{
+              contains:search
+            },
+          }, {
+            phone:{
+              contains:search
+            }
+          }, {
+            email:{
+              contains:search
+            }
+          }
+        ]
+      }),
+
+
+      ...(status && {
+        status:{
+          equals:status
+        }
+      })
+ },
+
+
+
+
+
+
+
+
     select: {
       id:true,
       companyName:true,
@@ -180,15 +222,48 @@ DeleteSupplier(id:string){
 
 
 //  Stationaries
-
 createStationery(data: any) {
   return prisma.stationary.create({
     data,
   });
 },
 
-getAllStationeries() {
+
+// Get Stationery
+getAllStationeries(search?:string, status?:StockStatus) {
   return prisma.stationary.findMany({
+
+
+where:{
+  ...(search && {
+    name:{
+      contains:search,
+      mode:"insensitive"
+    }
+  }),
+
+
+...(status && {
+  status:{
+      equals:status as StockStatus,
+      // mode:"insensitive"
+  }
+})
+
+
+},
+
+
+
+
+
+
+
+
+
+
+
+
     select: {
       id:true,
       name: true,

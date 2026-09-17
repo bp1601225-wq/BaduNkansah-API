@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import MastersService from "../services/Masters/master_Services";
 import ResponseWork from "../utilityResponse/Response";
 import { error } from "node:console";
+import { StockStatus, SupplierStatus } from "../../generated/prisma/enums";
 
 const MasterControllers = {
 
@@ -41,10 +42,13 @@ console.log(error)
   },
 
 
-  async getAllAuthors(_req: Request, res: Response, next: NextFunction) {
+  async getAllAuthors(req: Request, res: Response, next: NextFunction) {
     try {
 
-      const authors = await MastersService.getAllAuthors();
+
+
+      const authors = await MastersService.
+      getAllAuthors();
 
       return ResponseWork.SuccessResponse(
         200,
@@ -155,7 +159,12 @@ async GetAllSuppliers(req:Request, res:Response, ){
 
   try {
 
-    const data =await MastersService.GetAllSuppliers()
+const search = req.query.search as string
+const status = req.query.status as SupplierStatus
+
+    const data =await MastersService.GetAllSuppliers(
+      search, status
+    )
 
     ResponseWork.SuccessResponse(
       201,
@@ -291,7 +300,20 @@ async DeleteSupplier (req:Request, res:Response){
   async getAllStationeries(req: Request, res: Response, next: NextFunction) {
     try {
 
-      const stationeries = await MastersService.getAllStationeries();
+      
+// get from query 
+
+const search = typeof req.query.search === "string"
+  ? req.query.search
+  : undefined;
+
+const status = req.query.status as StockStatus
+
+// console.log(search); // "pen"
+// console.log(status); // "IN_STOCK"
+
+
+      const stationeries = await MastersService.getAllStationeries(search, status);
 
       return ResponseWork.SuccessResponse(
         200,

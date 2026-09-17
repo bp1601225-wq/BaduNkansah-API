@@ -1,10 +1,58 @@
+import { UserStatus } from "../../../generated/prisma/enums"
 import {prisma} from "../../lib/prisma"
 import argon2 from "argon2"
 
 export const UserService = {
 
-    GetAllUser(){
+    GetAllUser(search?:string, status?:UserStatus){
         return prisma.user.findMany({
+
+
+where:{
+
+  ...(search && {
+  OR:[
+    {
+      userName:{
+        contains:search,
+        mode:"insensitive"
+      },
+    }, {
+      email:{
+        contains:search,
+        mode:"insensitive"
+
+      }
+    }, {
+         contact:{
+        contains:search,
+        mode:"insensitive"
+
+      }
+    }
+    
+  ]
+  }),
+
+  ...(status && {
+    status:{
+      equals:status
+    }
+  })
+
+
+
+},
+
+
+
+
+
+
+
+
+
+
             select:{
                 id:true,
                 userName:true,
