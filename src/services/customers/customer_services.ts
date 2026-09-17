@@ -1,23 +1,74 @@
 export const CustomerServices = {
-  getAll(model: any) {
-    return model.findMany({
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        email: true,
-        address: true,
-        type: true,
-        status: true,
-        notes: true,
-        createdAt: true,
+getAll(model: any, search?: string) {
+  const searchValue = search?.trim() || "";
+
+  return model.findMany({
+    where: searchValue
+      ? {
+          OR: [
+            {
+              firstName: {
+                contains: searchValue,
+                mode: "insensitive",
+              },
+            },
+            {
+              lastName: {
+                contains: searchValue,
+                mode: "insensitive",
+    
+              },
+            },
+            {
+              email: {
+                contains: searchValue,
+                mode: "insensitive",
+              },
+            },
+            {
+              phone: {
+                contains: searchValue,
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : undefined,
+
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+      email: true,
+      address: true,
+      type: true,
+      status: true,
+      notes: true,
+      createdAt: true,
+
+      sales: {
+        select: {
+          id: true,
+          saleNumber: true,
+          saleDate: true,
+          subtotal: true,
+          discount: true,
+          tax: true,
+          totalAmount: true,
+          amountPaid: true,
+          changeAmount: true,
+          paymentMethod: true,
+          status: true,
+        },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-  },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+},
 
   create(model: any, data: any) {
     return model.create({
@@ -129,4 +180,111 @@ export const CustomerServices = {
       },
     });
   },
+
+
+
+  // Fetch All Cusomers with Sales 
+GetCustomerSales(model: any, search: string) {
+  return model.findMany({
+    where: {
+
+      OR: [
+        {
+          firstName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          lastName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          phone: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ],
+      
+    },
+
+    select: {
+      // Customer information
+      id: true,
+      firstName: true,
+      lastName: true,
+      phone: true,
+      email: true,
+      type: true,
+      status: true,
+
+      // Customer's sales
+      sales: {
+        select: {
+          id: true,
+          saleNumber: true,
+          saleDate: true,
+
+          subtotal: true,
+          discount: true,
+          tax: true,
+          totalAmount: true,
+          amountPaid: true,
+          changeAmount: true,
+
+          paymentMethod: true,
+          status: true,
+
+          // Items belonging to this sale
+          items: {
+            select: {
+              id: true,
+              quantity: true,
+              unitPrice: true,
+              bookId: true,
+
+              // Book information
+              book: {
+                select: {
+                  id: true,
+                  bookTitle: true,
+                  isbn: true,
+
+                  // Useful for displaying current book information
+                  sellingPrice: true,
+                  status: true,
+
+                  // Author
+                  author: {
+                    select: {
+                      id: true,
+                      authorName: true,
+                    },
+                  },
+
+                  // Category
+                  category: {
+                    select: {
+                      id: true,
+                      categoryName: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+}
 };

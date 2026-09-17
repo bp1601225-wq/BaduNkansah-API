@@ -4,12 +4,21 @@ import { EmployeeServices } from "../services/Employee/EmployeeServices";
 
 const model = EmplyeeModel.Employee
 export const EmployeeController = {
+  
 
   // Get all employees
-  async getAllEmployees(_req: Request, res: Response) {
+  async getAllEmployees(req: Request, res: Response) {
     try {
+
+
+    const search =
+  typeof req.query.search === "string"
+    ? req.query.search.trim()
+    : "";
+
+
       const employees = await EmployeeServices.getAll(
-        model
+        model, search
       );
 
       return res.status(200).json({

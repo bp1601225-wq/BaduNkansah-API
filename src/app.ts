@@ -22,6 +22,7 @@ import { SalesKPIRoutes } from "./routes/SalesKPIRoutes";
 import { SuppliersKpiRoutes } from "./routes/kpiRoutes/SupplierKPIRoutes";
 import { LoansRouter } from "./routes/LoanRoutes";
 import { loansKPIRoutes } from "./routes/kpiRoutes/LoanKPI_Routes";
+import { BooksKPIRoutes } from "./routes/kpiRoutes/BooksKPIRoutes";
 
 const app = express();
 
@@ -67,5 +68,6 @@ app.use(LoansRouter)
 app.use(SalesKPIRoutes)
 app.use(SuppliersKpiRoutes)
 app.use(loansKPIRoutes)
+app.use(BooksKPIRoutes)
 
 export default app;

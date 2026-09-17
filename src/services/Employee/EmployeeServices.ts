@@ -1,20 +1,39 @@
 export const EmployeeServices = {
 
   // Get all employees
-getAll(model: any) {
+getAll(model: any, search?: string) {
+  const searchValue = search?.trim() || "";
+
   return model.findMany({
+    where: searchValue
+      ? {
+          OR: [
+            {
+              fullName: {
+                contains: searchValue,
+                mode: "insensitive",
+              },
+            },
+            {
+              phoneNumber: {
+                contains: searchValue,
+                mode: "insensitive",
+              },
+            },
+          ],
+        }
+      : undefined,
+
     select: {
       id: true,
       fullName: true,
       phoneNumber: true,
-
-
       salary: true,
       status: true,
       hireDate: true,
       createdAt: true,
       updatedAt: true,
-      roleId:true,
+      roleId: true,
 
       role: {
         select: {
@@ -24,7 +43,6 @@ getAll(model: any) {
     },
   });
 },
-
   // Get single employee
   getById(model: any, id: string) {
     return model.findUnique({

@@ -1,9 +1,51 @@
+import { StockStatus } from "../../../generated/prisma/enums";
 
 export const InventoryServices = {
 
-getAllInventory(model:any){
+getAllInventory(model:any, search?:string, status?:StockStatus){
 
 return model.findMany({
+
+// filters
+where: {
+...(search && {
+OR: [
+{
+book: {
+  is: {
+    OR: [
+      {
+        bookTitle: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        author: {
+          is: {
+            authorName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+    ],
+  },
+},
+},
+],
+}),
+
+...(status && {
+status,
+}),
+},
+
+
+
+
+
 
 select:{
 
@@ -20,18 +62,18 @@ createdAt:true,
 updatedAt:true,
 
 
-    book:{
+book:{
 
-    select:{
-    bookTitle:true,
+select:{
+bookTitle:true,
 
-    author:{
-    select:{
-    authorName:true
-    }
-    },
+author:{
+select:{
+authorName:true
+}
+},
 
-        
+
 category:{
 select:{
 categoryName:true
@@ -61,35 +103,35 @@ status:true
 
 create(model:any, data:any){
 
-    if(!data.bookId && !data.stationaryId){
-        throw new Error(
-            "Select either a book or stationery"
-        );
-    }
+if(!data.bookId && !data.stationaryId){
+throw new Error(
+"Select either a book or stationery"
+);
+}
 
 
-    if(data.bookId && data.stationaryId){
-        throw new Error(
-            "You cannot select both book and stationery"
-        );
-    }
+if(data.bookId && data.stationaryId){
+throw new Error(
+"You cannot select both book and stationery"
+);
+}
 
 
-    return model.create({
+return model.create({
 
-        data:{
-            bookId: data.bookId || null,
+data:{
+bookId: data.bookId || null,
 
-            stationaryId: data.stationaryId || null,
+stationaryId: data.stationaryId || null,
 
-            quantity: data.quantity,
+quantity: data.quantity,
 
-            status: data.status,
+status: data.status,
 
-            reason: data.reason
-        }
+reason: data.reason
+}
 
-    })
+})
 
 },
 
@@ -97,45 +139,45 @@ create(model:any, data:any){
 
 // update inventory 
 async update(model: any, data: any) {
-  const { id, reason, quantity } = data;
+const { id, reason, quantity } = data;
 
-  // Validate required fields
-  if (!id || !reason || quantity === undefined || quantity === null) {
-    throw new Error("Please provide all required fields");
-  }
+// Validate required fields
+if (!id || !reason || quantity === undefined || quantity === null) {
+throw new Error("Please provide all required fields");
+}
 
-  // Convert quantity to number
-  const formattedQuantity = Number(quantity);
+// Convert quantity to number
+const formattedQuantity = Number(quantity);
 
-  // Validate quantity
-  if (
-    !Number.isFinite(formattedQuantity) ||
-    formattedQuantity < 0
-  ) {
-    throw new Error(
-      "Quantity must be a valid non-negative number"
-    );
-  }
+// Validate quantity
+if (
+!Number.isFinite(formattedQuantity) ||
+formattedQuantity < 0
+) {
+throw new Error(
+"Quantity must be a valid non-negative number"
+);
+}
 
-  // Determine inventory status
-  const status =
-    formattedQuantity === 0
-      ? "OUT_OF_STOCK"
-      : formattedQuantity <= 10
-        ? "LOW_STOCK"
-        : "IN_STOCK";
+// Determine inventory status
+const status =
+formattedQuantity === 0
+? "OUT_OF_STOCK"
+: formattedQuantity <= 10
+? "LOW_STOCK"
+: "IN_STOCK";
 
-  // Update inventory
-  return model.update({
-    where: {
-      id,
-    },
-    data: {
-      reason,
-      quantity: formattedQuantity,
-      status,
-    },
-  });
+// Update inventory
+return model.update({
+where: {
+id,
+},
+data: {
+reason,
+quantity: formattedQuantity,
+status,
+},
+});
 }
 // update(model:any, data:any){
 

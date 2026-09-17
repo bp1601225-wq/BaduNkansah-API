@@ -8,7 +8,10 @@ export const LoanController = {
   async GetLoans(req: Request, res: Response) {
     try {
 
-      const Loans = await LoansService.GetLoans({});
+      const { search, status, type } = req.query;
+
+
+      const Loans = await LoansService.GetLoans(search, status, type);
 
       ResponseWork.SuccessResponse(
         200,

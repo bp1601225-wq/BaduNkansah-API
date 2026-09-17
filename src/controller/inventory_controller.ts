@@ -3,6 +3,7 @@ import { InventoryModel } from "../services/inventory/inventoryModel";
 
 import ResponseWork from "../utilityResponse/Response";
 import { InventoryServices } from "../services/inventory/Inventory_services";
+import { StockStatus } from "../../generated/prisma/enums";
 
 
 
@@ -13,12 +14,19 @@ const model = InventoryModel.Inventory;
 export const InventoryController = {
 
 
-  async getAllInventory(_req: Request, res: Response) {
+  async getAllInventory(req: Request, res: Response) {
 
     try {
 
+
+const search = req.query.search as string
+const status = req.query.status as StockStatus
+
+
       const InventoryData = await InventoryServices.getAllInventory(
-        model
+        model,
+        search,
+        status
       );
 
 

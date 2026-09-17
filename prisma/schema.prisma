@@ -43,7 +43,6 @@ enum SupplierStatus {
   INACTIVE
 }
 
-
 enum PurchaseStatus {
   PENDING
   RECEIVED
@@ -132,6 +131,8 @@ model Sale {
 
   // Relations
   customer       Customer?     @relation(fields: [customerId], references: [id])
+
+  returns    SaleReturns[]    @relation("Sale Returns")
 
   items          SaleItem[]
 
@@ -226,13 +227,17 @@ model SalesVersionItem {
 
 
 
-model BookReturn {
+model SaleReturns {
 
   id              String        @id @default(uuid())
 
-  customerId      String
+  customerId      String   
 
-  bookId          String
+  saleId          String     
+
+  bookId          String     
+  
+  stationaryId    String  
 
   quantity        Int           @default(1)
 
@@ -250,6 +255,9 @@ model BookReturn {
 
   book            BookCatalog   @relation(fields: [bookId], references: [id])
 
+  sale Sale @relation("Sale Returns", fields: [saleId], references: [id])
+
+  stationary Stationary @relation("stationary returns", fields: [stationaryId], references: [id])
 
   createdAt       DateTime      @default(now())
 
@@ -286,7 +294,6 @@ model Customer {
   notes       String?
 
 
-
 // Relation Ships
   reservations BookReservation[]
 
@@ -294,7 +301,7 @@ stationeryReservations StationeryReservation[]
 
 sales   Sale[]
 
-returns BookReturn[]
+returns SaleReturns[]
 
   createdAt   DateTime @default(now())
 
@@ -374,7 +381,7 @@ model BookCatalog {
   bookTitle      String
   isbn           String?
 
-  // buyingPrice    Decimal
+  // buyingPrice     Decimal
   sellingPrice   Decimal
 
   status         BookStatus  @default(ACTIVE)
@@ -393,7 +400,7 @@ model BookCatalog {
 
   reservations   BookReservation[]   
 
-  returns BookReturn[] 
+  returns SaleReturns[] 
 
   sales SaleItem[]
 
@@ -487,7 +494,14 @@ model   Stationary {
 
   purchaseItems  PurchaseItem[]
 
-reservations StationeryReservation[]
+
+
+
+
+  reservations StationeryReservation[]
+
+
+  returns     SaleReturns[] @relation("stationary returns")
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

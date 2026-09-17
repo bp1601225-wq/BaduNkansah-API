@@ -5,29 +5,32 @@ import { SalesServiceModel } from "../services/Sales/SaleService";
 export const SalesController = {
 
 
-    async GetAllSalesRecords(req:Request ,res:Response) {
+  async GetAllSalesRecords(req: Request, res: Response) {
+  try {
+    const search =
+      typeof req.query.search === "string"
+        ? req.query.search.trim()
+        : undefined;
 
-    try {
+    const AllSalesData =
+      await SalesServiceModel.GetAllSales(search);
 
-        const AllSalesData = await SalesServiceModel.GetAllSales()
+    ResponseWork.SuccessResponse(
+      201,
+      "Sales fetched successfully",
+      AllSalesData,
+      res
+    );
+  } catch (error: any) {
+    console.log(error);
 
-ResponseWork.SuccessResponse(201,
-"Sales fetched successfully",
-AllSalesData,
-res
-)
-
-    } catch (error:any){
-        console.log(error)
-
-        ResponseWork.FailureResponse(500,
-            error.message,
-            res
-        )
-    }
-    },
-
-
+    ResponseWork.FailureResponse(
+      500,
+      error.message,
+      res
+    );
+  }
+},
 
  
    async  createSales(req:Request, res:Response){

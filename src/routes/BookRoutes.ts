@@ -16,6 +16,8 @@ BooksRouter.post(
 );
 
 
+BooksRouter.put("/books/:id", BookController.UpdateBooksController)
+
 
 // Book Reservations
 BooksRouter.get(

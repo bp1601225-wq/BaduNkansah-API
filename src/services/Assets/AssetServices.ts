@@ -1,10 +1,54 @@
+import { AssetCategory, AssetStatus, Location } from "../../../generated/prisma/enums";
 import {prisma} from "../../lib/prisma"
 import { GenerateAssetCode } from "../../UtilityFunctions/Utility";
 
 export const AssetServices = {
 
-GetAllAssets(){
+GetAllAssets(search?:string, location?:Location, status?:AssetStatus, category?:AssetCategory){
     return prisma.assets.findMany({
+
+
+
+// filters
+where: {
+  ...(search && {
+    OR: [
+      {
+        assetName: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        manufacturer: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  }),
+
+  ...(location && {
+    location,
+  }),
+
+  ...(status && {
+    status,
+  }),
+
+  ...(category && {
+    category,
+  }),
+},
+
+
+
+
+
+
+
+
+
         select:{
           id:true,
             assetCode:true,

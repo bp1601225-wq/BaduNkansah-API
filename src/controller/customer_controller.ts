@@ -3,12 +3,22 @@ import { CustomerModel } from "../services/customers/customerModel";
 import { CustomerServices } from "../services/customers/customer_services";
 import ResponseWork from "../utilityResponse/Response";
 
+
 const model = CustomerModel.customers;
 
 export const CustomerController = {
-  async getAllCustomers(_req: Request, res: Response) {
+  async getAllCustomers(req: Request, res: Response) {
     try {
-      const CustomerData = await CustomerServices.getAll(model);
+
+    const search =
+  typeof req.query.search === "string"
+    ? req.query.search.trim()
+    : "";
+
+
+      const CustomerData = await CustomerServices.getAll(model, search);
+
+
 
       ResponseWork.SuccessResponse(
         200,
@@ -126,4 +136,34 @@ export const CustomerController = {
       );
     }
   },
+
+
+  async FetchCustomerWithSales(req: Request, res: Response) {
+  try {
+
+    const fetch_Customer_With_SalesData = req.query.search as string;
+
+    const ReturnedSearch = await CustomerServices.GetCustomerSales(
+      model,
+      fetch_Customer_With_SalesData
+    );
+
+    ResponseWork.SuccessResponse(
+      200,
+      "Data loaded successfully",
+      ReturnedSearch,
+      res
+    );
+
+  } catch (error: any) {
+
+    console.log(error);
+
+    ResponseWork.FailureResponse(
+      500,
+      error.message,
+      res
+    );
+  }
+}
 };

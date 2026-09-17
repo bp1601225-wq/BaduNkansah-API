@@ -4,3 +4,7 @@ export const GenerateAssetCode = () => {
 
   return `${prefix}-${randomNumber}`;
 };
+
+
+
+export const getQueryString = (value: unknown): string => { return typeof value === "string" ? value.trim() : ""; };

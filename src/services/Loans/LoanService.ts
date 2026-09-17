@@ -1,13 +1,49 @@
 import { Loan, LoanPayment } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
+
+
+
 export const LoansService = {
 
   // =========================
   // GET ALL LOANS
   // =========================
-GetLoans(params: {}) {
+GetLoans(search?:any, status?:any, type?:any) {
   return prisma.loan.findMany({
+
+where: {
+    ...(search && {
+      OR: [
+        {
+          personName: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+        {
+          phone: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ],
+    }),
+
+    ...(status && {
+      status: status,
+    }),
+
+    ...(type && {
+      type: type,
+    }),
+  },
+
+
+
+
+
+
     orderBy: {
       createdAt: "desc",
     },
@@ -141,7 +177,7 @@ CreateLoans(data: Loan) {
       amount: loanAmount,
 
       loanDate: finalLoanDate,
-
+ 
       dueDate: finalDueDate,
 
       status: status,

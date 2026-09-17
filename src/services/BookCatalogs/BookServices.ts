@@ -1,78 +1,117 @@
+import { BookCatalog } from "../../../generated/prisma/client"
 import { ReservationStatus } from "../../../generated/prisma/enums"
 
 
 export const BooksServices = {
 
-getAll(model:any, quantity?:any){
+getAll(model: any, quantity?: number, search?: string) {
+  return model.findMany({
+    select: {
+      id: true,
+      bookTitle: true,
+      sellingPrice: true,
+      status: true,
 
-
-return model.findMany({
-
-select:{
-id:true,
-bookTitle:true,
-    // buyingPrice:true,
-    sellingPrice:true,
-    status:true,
-      
-        author: {
-            select:{
-                authorName:true,
-                biography:true,
-
-            }
+      author: {
+        select: {
+          authorName: true,
+          biography: true,
         },
+      },
 
-        category:{
-            select:{
-                categoryName:true,
-                description:true,
-                status:true,
-                createdAt:true
-            }
+      category: {
+        select: {
+          categoryName: true,
+          description: true,
+          status: true,
+          createdAt: true,
         },
+      },
+    },
 
-    
+    where: {
+      ...(quantity !== undefined
+        ? {
+            inventory: {
+              quantity: {
+                gte: quantity,
+              },
+            },
+          }
+        : {}),
+
+      ...(search
+        ? {
+            OR: [
+              {
+                bookTitle: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                author: {
+                  is: {
+                    authorName: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              },
+              {
+                category: {
+                  is: {
+                    categoryName: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              },
+            ],
+          }
+        : {}),
+    },
+  });
 },
 
-where: {
-...(quantity !== undefined
-? {
-inventory: {
-  quantity: {
-    gte: quantity,
-  },
+// Create a book and add it to inventory
+create(model: any, data: BookCatalog) {
+  return model.$transaction(async (tx: any) => {
+
+    const createdBook = await tx.bookCatalog.create({
+      data
+    })
+
+    const inventory = await tx.inventory.create({
+      data: {
+        bookId: createdBook.id,
+        quantity: 1
+      }
+    })
+
+    return {
+      createdBook,
+      inventory
+    }
+  })
 },
+
+updateBooksService(model:any, data:any){
+const {id, bookTitle,  sellingPrice, status} = data
+
+if (!id) {
+    throw new Error("The book you are trying to update does not exists")
 }
-: {}),
-},
-
-
-
-
-})
-
-
-
-},
-
-create(model: any, data: any) {
-return model.create({
-data,
-});
-},
-update(model:any, data:any){
-const {id, bookTitle, buyingPrice, sellingPrice, status, isbn} = data
 
 return model.update({
     where:{
         id
     }, data:{
         bookTitle,
-        buyingPrice,
         sellingPrice,
         status,
-        isbn
     }
 })
 },
@@ -138,9 +177,11 @@ return model.findUnique({
 
 },
 
-//  Book Reservations (lOGIC Models)
 
 
+
+
+//  Book Reservations (lOGIC Models
 // decrease inventory by reserved quantity. (COLLECTED)
 Create_reservation(model: any, data: any) {
 

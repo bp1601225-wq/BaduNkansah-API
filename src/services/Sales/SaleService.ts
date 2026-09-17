@@ -3,8 +3,68 @@ import { prisma } from "../../lib/prisma";
 
 export const SalesServiceModel = {
 
-GetAllSales(data?: any) {
+
+GetAllSales(search?: string) {
   return prisma.sale.findMany({
+    where: {
+      ...(search
+        ? {
+      OR: [
+  {
+    saleNumber: {
+      contains: search,
+      mode: "insensitive",
+    },
+  },
+  {
+    customer: {
+      is: {
+        OR: [
+          {
+            firstName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            lastName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            phone: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ],
+      },
+    },
+  },
+  {
+    items: {
+      some: {
+        book: {
+          bookTitle: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      },
+    },
+  },
+],
+          }
+        : {}),
+    },
+
     select: {
       id: true,
       saleNumber: true,
@@ -29,29 +89,30 @@ GetAllSales(data?: any) {
         },
       },
 
+      items: {
+        select: {
+          bookId: true,
+          quantity: true,
+          unitPrice: true,
 
-      items:{
-        select:{
-          bookId:true,
-          quantity:true,
-          unitPrice:true
-        }
+          book: {
+            select: {
+              bookTitle: true,
+            },
+          },
+        },
       },
 
-
-
-
-            customer:{
-                select:{
-                    id:true,
-                    firstName:true,
-                    lastName:true,
-                    phone:true,
-                    email:true,
-                    address:true
-                }
-            }
-        
+      customer: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phone: true,
+          email: true,
+          address: true,
+        },
+      },
     },
   });
 },
@@ -510,7 +571,8 @@ updateSales(data: any) {
 
     return updatedSale;
   });
-}
+},
+
 
 
 

@@ -7,15 +7,7 @@ export const DashboardKPIService = {
     const [
 
       // Books
-      totalBooks,
-      booksInStock,
-      booksInLowStock,
-      booksOutOfStock,
-      AvgBookSellingPrice,
-      HighestSellingPrice,
-      LowestSellingPrice,
-      TotalBookReservations,
-      TotalReservedBooksQuantity,
+ 
 
       // Books and Reservations
       BookReservations,
@@ -60,60 +52,9 @@ export const DashboardKPIService = {
       // BOOKS
       // =====================
 
-      prisma.bookCatalog.count(),
+ 
 
-      prisma.inventory.count({
-        where: {
-          bookId: {
-            not: null,
-          },
-          status: "IN_STOCK",
-        },
-      }),
-
-      prisma.inventory.count({
-        where: {
-          bookId: {
-            not: null,
-          },
-          status: "LOW_STOCK",
-        },
-      }),
-
-      prisma.inventory.count({
-        where: {
-          bookId: {
-            not: null,
-          },
-          status: "OUT_OF_STOCK",
-        },
-      }),
-
-      prisma.bookCatalog.aggregate({
-        _avg: {
-          sellingPrice: true,
-        },
-      }),
-
-      prisma.bookCatalog.aggregate({
-        _max: {
-          sellingPrice: true,
-        },
-      }),
-
-      prisma.bookCatalog.aggregate({
-        _min: {
-          sellingPrice: true,
-        },
-      }),
-
-      prisma.bookReservation.count(),
-
-      prisma.bookReservation.aggregate({
-        _sum: {
-          quantity: true,
-        },
-      }),
+   
 
       // =====================
       // BOOK RESERVATIONS
@@ -275,24 +216,6 @@ export const DashboardKPIService = {
       // BOOKS
       // =====================
 
-      totalBooks,
-
-      booksInStock,
-
-      booksInLowStock,
-
-      booksOutOfStock,
-
-      AvgBookSellingPrice,
-
-      HighestSellingPrice,
-
-      LowestSellingPrice,
-
-      TotalBookReservations,
-
-      TotalReservedBooksQuantity:
-        TotalReservedBooksQuantity._sum.quantity,
 
       BookReservations,
 

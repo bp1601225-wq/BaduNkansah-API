@@ -10,7 +10,7 @@ export const dateFilters = {
 
     return {
       gte: start,
-      lte: end
+      lte: end 
     }
   },
 

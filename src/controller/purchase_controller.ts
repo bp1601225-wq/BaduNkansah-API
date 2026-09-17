@@ -5,32 +5,32 @@ import { PurchaseModel } from "../services/Purchase/PurchaseService";
 export const PurchaseController = {
 
   // Get All Purchases
-  async GetAll(req: Request, res: Response) {
-    try {
-      const status = req.query.status as string | undefined
+async GetAll(req: Request, res: Response) {
+  try {
+    const status = req.query.status as string | undefined;
+    const search = req.query.search as string | undefined;
 
-      const AllData = await PurchaseModel.GetAllPurchase(status);
+    console.log("Query status:", status);
+    console.log("Query search:", search);
 
+    const AllData = await PurchaseModel.GetAllPurchase(status, search);
 
-      
-      ResponseWork.SuccessResponse(
-        200,
-        "All purchases fetched successfully",
-        AllData,
-        res
-      );
+    ResponseWork.SuccessResponse(
+      200,
+      "All purchases fetched successfully",
+      AllData,
+      res
+    );
+  } catch (error: any) {
+    console.log(error);
 
-    } catch (error: any) {
-      console.log(error);
-
-      ResponseWork.FailureResponse(
-        500,
-        error.message,
-        res
-      );
-    }
-  },
-
+    ResponseWork.FailureResponse(
+      500,
+      error.message,
+      res
+    );
+  }
+},
 
   // Get Purchase By Id
   async GetById(req: Request, res: Response) {

@@ -6,48 +6,48 @@ import ResponseWork from "../utilityResponse/Response";
 
 const bookModel = BookModels.books;
 const reservationModel = BookModels.reservations;
-// const inventoryModel = BookModels.inventory
+const prisma = BookModels.prisma
 
 
 export const BookController = {
 
 
-async getAllBooks(req:Request, res:Response){
+async getAllBooks(req: Request, res: Response) {
+  try {
+    const quantity = req.query.quantity
+      ? Number(req.query.quantity)
+      : undefined;
 
-    try {
+    const search =
+      typeof req.query.search === "string"
+        ? req.query.search.trim()
+        : undefined;
 
+    console.log("quantity:", quantity);
+    console.log("search:", search);
 
-       const quantity = req.query.quantity
-  ? Number(req.query.quantity)
-  : undefined;
+    const BooksData = await BooksServices.getAll(
+      bookModel,
+      quantity,
+      search
+    );
 
-        console.log(`params incoming is`, quantity)
+    ResponseWork.SuccessResponse(
+      201,
+      "Books Fetched Successfully",
+      BooksData,
+      res
+    );
+  } catch (error) {
+    console.log(error);
 
-        const BooksData = await BooksServices.getAll(bookModel, quantity)
-
-
-        ResponseWork.SuccessResponse(
-            201,
-            "Books Fetched Successfully",
-            BooksData,
-            res
-        )
-
-
-    } catch(error){
-
-        console.log(error)
-
-        ResponseWork.FailureResponse(
-            500,
-            "There was an error fetching books",
-            res
-        )
-
-    }
-
+    ResponseWork.FailureResponse(
+      500,
+      "There was an error fetching books",
+      res
+    );
+  }
 },
-
 
 
 
@@ -61,7 +61,7 @@ async CreateBooks(req:Request, res:Response){
         console.log(`Data is`, incomingData)
 
         const BooksData = await BooksServices.create(
-            bookModel,
+            prisma,
             incomingData
         )
 
@@ -86,6 +86,39 @@ async CreateBooks(req:Request, res:Response){
 
     }
 
+},
+
+
+async UpdateBooksController(req:Request, res:Response){
+    try {
+
+
+const data = req.body
+// const id = req.params.id
+
+console.log(`incoming data is`, data)
+
+const incomingData = await BooksServices.
+updateBooksService(bookModel, {
+      id: req.params.id,
+      ... data
+    })
+
+ResponseWork.SuccessResponse(201, 
+    "Book data updated Succesfully",
+    incomingData,
+    res
+)
+
+    } catch (error:any){
+
+        console.log(error)
+
+ResponseWork.FailureResponse(500,
+    error.message,
+    res
+)
+    }
 },
 
 

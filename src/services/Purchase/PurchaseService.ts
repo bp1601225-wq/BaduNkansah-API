@@ -2,13 +2,48 @@ import { prisma } from "../../lib/prisma";
 
 export const PurchaseModel = {
 
-GetAllPurchase(status?: string) {
+GetAllPurchase(status?: string, search?:string) {
   return prisma.purchase.findMany({
-    where: status
-      ? {
-          status: status as any, // or cast to your PurchaseStatus enum
-        }
-      : {},
+  
+where:{
+
+...(status && {
+  status:status as any
+}),
+
+...(search && {
+  supplier:{
+    is:{
+      OR:[
+        {
+            companyName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          }, {
+            contactName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          }, {
+            phone: {
+              contains: search,
+              mode: "insensitive",
+            },
+          }, {
+            email: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+      ]
+    }
+  }
+})
+
+},
+
+
 
     select: {
       id: true,
